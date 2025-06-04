@@ -4,14 +4,17 @@ import { store } from "./store/store";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import "./App.css";
-
+import Sidebar from "./components/Sidebar";
+import Layout from "./components/Layout";
 function App() {
   return (
     <Provider store={store}>
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/auth" element={<Auth />} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<Sidebar />} />
+            <Route path="/auth" element={<Auth />} />
+          </Route>
         </Routes>
       </Router>
     </Provider>
