@@ -6,16 +6,19 @@ import Auth from "./pages/Auth";
 import "./App.css";
 import Sidebar from "./components/Sidebar";
 import Layout from "./components/Layout";
+import ProfilePage from "./components/ProfilePage";
 function App() {
   return (
     <Provider store={store}>
       <Router>
+        <Layout>
         <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Sidebar />} />
+                      <Route path="/" element={<Home />} />
+
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/auth" element={<Auth />} />
-          </Route>
         </Routes>
+        </Layout>
       </Router>
     </Provider>
   );

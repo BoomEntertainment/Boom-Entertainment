@@ -7,10 +7,19 @@ import { IoIosLogOut } from "react-icons/io";
 
 import { IoIosLogIn } from "react-icons/io";
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 const Sidebar = () => {
   const [activeTab, setActiveTab] = useState('home');
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-
+const navigate = useNavigate(); 
+  const handleNavigation = (id) => {
+    setActiveTab(id);
+    if (id === 'profile') {
+      navigate('/profile'); // 👈 Go to profile page
+    }
+    // Add other routes if needed
+  };
   const navigationItems = [
     {
       id: 'Short Video',
@@ -83,7 +92,7 @@ const Sidebar = () => {
           {navigationItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => {setActiveTab(item.id);  handleNavigation(item.id)}}
               className={`flex flex-col font-semibold items-center justify-center w-full h-full transition-colors ${
                 activeTab === item.id ? 'text-[#f1c40f]' : 'text-white'
               }`}
@@ -108,7 +117,7 @@ const Sidebar = () => {
               {navigationItems.map((item) => (
                 <li key={item.id}>
                   <button
-                    onClick={() => setActiveTab(item.id)}
+                    onClick={() => {setActiveTab(item.id);  handleNavigation(item.id)}}
                     className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors hover:bg-gray-800 ${
                       activeTab === item.id ? 'bg-gray-800 text-[#f2c50f]' : 'text-white'
                     }`}
