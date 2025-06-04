@@ -4,15 +4,20 @@ import { store } from "./store/store";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import "./App.css";
-
+import Sidebar from "./components/Sidebar";
+import Layout from "./components/Layout";
+import ProfilePage from "./components/ProfilePage";
 function App() {
   return (
     <Provider store={store}>
       <Router>
+        <Layout>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/auth" element={<Auth />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/auth" element={<Auth />} />
         </Routes>
+        </Layout>
       </Router>
     </Provider>
   );
