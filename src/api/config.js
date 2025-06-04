@@ -44,4 +44,9 @@ export const endpoints = {
     register: "/auth/register",
     login: "/auth/login",
   },
+  wallet: {
+    getWallet: "/wallet",
+    addMoney: "/wallet/add",
+    withdraw: "/wallet/withdraw",
+  },
 };

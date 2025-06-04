@@ -1,0 +1,340 @@
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchWalletAndHistory,
+  setFilters,
+  clearFilters,
+} from "../store/walletSlice";
+import DepositModal from "../components/wallet/DepositModal";
+import WithdrawModal from "../components/wallet/WithdrawModal";
+
+const Wallet = () => {
+  const dispatch = useDispatch();
+  const { balance, history, pagination, loading, error, filters } = useSelector(
+    (state) => state.wallet
+  );
+
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchWalletAndHistory());
+  }, [dispatch]);
+
+  const handleFilterChange = (filterType, value) => {
+    dispatch(setFilters({ [filterType]: value }));
+  };
+
+  const handlePageChange = (newPage) => {
+    dispatch(fetchWalletAndHistory({ page: newPage, limit: pagination.limit }));
+  };
+
+  const getStatusBadge = (status) => {
+    const variants = {
+      completed: "bg-green-900/50 text-green-300 border border-green-700",
+      pending: "bg-yellow-900/50 text-yellow-300 border border-yellow-700",
+      failed: "bg-red-900/50 text-red-300 border border-red-700",
+    };
+    return (
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-medium ${variants[status]}`}
+      >
+        {status}
+      </span>
+    );
+  };
+
+  const getTransactionTypeBadge = (type) => {
+    const variants = {
+      recharge: "bg-blue-900/50 text-blue-300 border border-blue-700",
+      reward: "bg-green-900/50 text-green-300 border border-green-700",
+      refund: "bg-purple-900/50 text-purple-300 border border-purple-700",
+      withdrawal: "bg-yellow-900/50 text-yellow-300 border border-yellow-700",
+      other: "bg-gray-900/50 text-gray-300 border border-gray-700",
+    };
+    return (
+      <span
+        className={`px-3 py-1 rounded-full text-xs font-medium ${
+          variants[type] || variants.other
+        }`}
+      >
+        {type}
+      </span>
+    );
+  };
+
+  const filteredHistory = history.filter((transaction) => {
+    if (filters.type !== "all" && transaction.type !== filters.type) {
+      return false;
+    }
+
+    if (filters.transactionType !== "all") {
+      if (transaction.transactionType !== filters.transactionType) {
+        if (
+          filters.transactionType === "withdrawal" &&
+          transaction.type === "payout"
+        ) {
+          return true;
+        }
+        return false;
+      }
+    }
+
+    if (filters.status !== "all" && transaction.status !== filters.status) {
+      return false;
+    }
+
+    return true;
+  });
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      {error && (
+        <div className="mb-4 p-4 bg-red-900/50 text-red-200 rounded-lg border border-red-700">
+          {error}
+        </div>
+      )}
+
+      <div className="mb-8">
+        <div className="bg-gray-900 rounded-2xl shadow-xl p-8 text-center border border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-300 mb-2">
+            Wallet Balance
+          </h2>
+          <p className="text-4xl font-bold text-white mb-6">₹{balance}</p>
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={() => setShowDepositModal(true)}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            >
+              Add Money
+            </button>
+            <button
+              onClick={() => setShowWithdrawModal(true)}
+              disabled={balance <= 0}
+              className={`px-6 py-3 border border-blue-600 text-blue-400 rounded-lg hover:bg-blue-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                balance <= 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              Withdraw
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gray-900 rounded-2xl shadow-xl p-6 border border-gray-700">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold text-white">
+            Transaction History
+          </h2>
+          <button
+            onClick={() => dispatch(clearFilters())}
+            className="text-sm text-gray-400 hover:text-white transition-colors"
+          >
+            Clear Filters
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Transaction Type
+            </label>
+            <select
+              value={filters.type}
+              onChange={(e) => handleFilterChange("type", e.target.value)}
+              className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+            >
+              <option value="all">All Types</option>
+              <option value="payin">Pay In</option>
+              <option value="payout">Pay Out</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none mt-6">
+              <svg
+                className="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Category
+            </label>
+            <select
+              value={filters.transactionType}
+              onChange={(e) =>
+                handleFilterChange("transactionType", e.target.value)
+              }
+              className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+            >
+              <option value="all">All Categories</option>
+              <option value="recharge">Recharge</option>
+              <option value="reward">Reward</option>
+              <option value="refund">Refund</option>
+              <option value="withdrawal">Withdrawal</option>
+              <option value="other">Other</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none mt-6">
+              <svg
+                className="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              Status
+            </label>
+            <select
+              value={filters.status}
+              onChange={(e) => handleFilterChange("status", e.target.value)}
+              className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+            >
+              <option value="all">All Status</option>
+              <option value="completed">Completed</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Failed</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none mt-6">
+              <svg
+                className="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto rounded-lg border border-gray-700">
+              <table className="min-w-full divide-y divide-gray-700">
+                <thead className="bg-gray-800">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Amount
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                      Category
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-gray-900 divide-y divide-gray-700">
+                  {filteredHistory.map((transaction) => (
+                    <tr
+                      key={transaction._id}
+                      className="hover:bg-gray-800/50 transition-colors"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        {new Date(transaction.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            transaction.type === "payin"
+                              ? "bg-green-900/50 text-green-300 border border-green-700"
+                              : "bg-red-900/50 text-red-300 border border-red-700"
+                          }`}
+                        >
+                          {transaction.type}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-white font-medium">
+                        ₹{transaction.amount}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getStatusBadge(transaction.status)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getTransactionTypeBadge(transaction.transactionType)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {pagination.pages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <button
+                  onClick={() => handlePageChange(pagination.page - 1)}
+                  disabled={pagination.page === 1}
+                  className={`px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                    pagination.page === 1 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  Previous
+                </button>
+                <span className="text-sm text-gray-400">
+                  Page {pagination.page} of {pagination.pages}
+                </span>
+                <button
+                  onClick={() => handlePageChange(pagination.page + 1)}
+                  disabled={pagination.page === pagination.pages}
+                  className={`px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                    pagination.page === pagination.pages
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <DepositModal
+        show={showDepositModal}
+        onHide={() => setShowDepositModal(false)}
+      />
+      <WithdrawModal
+        show={showWithdrawModal}
+        onHide={() => setShowWithdrawModal(false)}
+      />
+    </div>
+  );
+};
+
+export default Wallet;
