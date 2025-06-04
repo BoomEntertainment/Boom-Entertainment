@@ -337,7 +337,7 @@ const Auth = () => {
                             profilePhoto: null,
                           }));
                         }}
-                        className="absolute top-2 right-2 p-1 bg-black bg-opacity-50 rounded-full text-white hover:bg-opacity-70 transition-opacity"
+                        className="absolute top-2 right-2 p-1 bg-[#1a1a1a] bg-opacity-50 rounded-full text-white hover:bg-opacity-70 transition-opacity"
                       >
                         <svg
                           className="w-4 h-4"
