@@ -13,8 +13,7 @@ function App() {
       <Router>
         <Layout>
         <Routes>
-                      <Route path="/" element={<Home />} />
-
+            <Route path="/" element={<Home />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/auth" element={<Auth />} />
         </Routes>
