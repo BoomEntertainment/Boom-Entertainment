@@ -6,6 +6,18 @@ import { FaChevronLeft } from "react-icons/fa6";
 import { CiBookmark } from "react-icons/ci";
 
 const ProfilePage = () => {
+    const images = [
+  'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d',
+  'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
+  'https://images.unsplash.com/photo-1519999482648-25049ddd37b1',
+  'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
+  'https://images.unsplash.com/photo-1531256379411-3a4dc0b4c7b8',
+  'https://images.unsplash.com/photo-1529070538774-1843cb3265df',
+  'https://images.unsplash.com/photo-1603415526960-f7e0328d40f9',
+  'https://images.unsplash.com/photo-1593642532973-d31b6557fa68',
+  'https://images.unsplash.com/photo-1518770660439-4636190af475',
+];
+
   return (
     <div className="min-h-screen bg-[#1a1a1a] text-white font-poppins w-full max-w-sm mx-auto overflow-hidden">
       {/* Header */}
@@ -66,25 +78,19 @@ const ProfilePage = () => {
       </div>
 
       {/* Gallery Grid */}
-      <div className="grid grid-cols-3 gap-[1px] bg-black">
-        {[...Array(9)].map((_, i) => (
-          <img
-            key={i}
-            src={`https://source.unsplash.com/random/300x300?sig=${i}`}
-            alt="post"
-            className="w-full h-[120px] object-cover"
-          />
-        ))}
-      </div>
+    <div className="grid grid-cols-3 gap-[1px] bg-black">
+  {images.map((url, i) => (
+    <img
+      key={i}
+        src={`${url}`}
+      alt={`post-${i}`}
+      className="w-full h-[120px] object-cover"
+    />
+  ))}
+</div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-black border-t border-gray-800 flex justify-around items-center h-14">
-        <FiVideo className="text-white text-xl" />
-        <FiGrid className="text-white text-xl" />
-        <FiPlusSquare className="text-white text-xl" />
-        <FiHeart className="text-white text-xl" />
-        <FiUser className="text-white text-xl" />
-      </div>
+
+     
     </div>
   );
 };

@@ -18,6 +18,12 @@ const navigate = useNavigate();
     if (id === 'profile') {
       navigate('/profile'); // 👈 Go to profile page
     }
+    if(id==='Long Video'){
+        navigate('/');
+    }
+     if(id==='Short Video'){
+        navigate('/');
+    }
     // Add other routes if needed
   };
   const navigationItems = [
