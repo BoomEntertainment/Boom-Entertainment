@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { api, endpoints } from "../api/config";
@@ -17,16 +17,18 @@ import OtpForm from "../components/auth/OtpForm";
 const Auth = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error, otpSent, phoneNumber, isRegistered, otpVerified } =
-    useSelector((state) => state.auth);
+  const { loading, error, otpSent, phoneNumber, isRegistered } = useSelector(
+    (state) => state.auth
+  );
   const [isRegistering, setIsRegistering] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     username: "",
     dateOfBirth: "",
     gender: "",
-    preferences: [],
+    preference: "",
     videoLanguage: "",
+    location: "",
     profilePhoto: null,
   });
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -36,60 +38,15 @@ const Auth = () => {
     dateOfBirth: false,
     preference: false,
     videoLanguage: false,
+    location: false,
   });
-
-  const [preferenceInput, setPreferenceInput] = useState("");
-  const [showPreferenceSuggestions, setShowPreferenceSuggestions] =
-    useState(false);
-
-  const languages = [
-    "English",
-    "Telugu",
-    "Hindi",
-    "Tamil",
-    "Kannada",
-    "Malayalam",
-    "Bengali",
-    "Marathi",
-    "Gujarati",
-    "Punjabi",
-  ];
-
-  const preferenceOptions = [
-    "Comedy",
-    "Horror",
-    "Action",
-    "Drama",
-    "Romance",
-    "Thriller",
-    "Sci-Fi",
-    "Fantasy",
-    "Documentary",
-    "Animation",
-    "Crime",
-    "Mystery",
-    "Adventure",
-    "Family",
-    "Sports",
-    "Music",
-    "Biography",
-    "History",
-    "War",
-    "Western",
-  ];
-
-  const filteredPreferences = preferenceOptions.filter(
-    (pref) =>
-      pref.toLowerCase().includes(preferenceInput.toLowerCase()) &&
-      !formData.preferences.includes(pref)
-  );
 
   const nameRef = useRef(null);
   const usernameRef = useRef(null);
   const dateOfBirthRef = useRef(null);
   const preferenceRef = useRef(null);
   const videoLanguageRef = useRef(null);
-  const suggestionsRef = useRef(null);
+  const locationRef = useRef(null);
 
   const handleSendOtp = async (phone) => {
     try {
@@ -111,30 +68,10 @@ const Auth = () => {
       const formDataObj = new FormData();
       Object.keys(formData).forEach((key) => {
         if (formData[key]) {
-          if (key === "preferences") {
-            formDataObj.append(key, JSON.stringify(formData[key]));
-          } else {
-            formDataObj.append(key, formData[key]);
-          }
+          formDataObj.append(key, formData[key]);
         }
       });
       formDataObj.append("phone", phoneNumber);
-
-      // Try to get location
-      try {
-        const position = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        });
-        formDataObj.append(
-          "location",
-          JSON.stringify({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          })
-        );
-      } catch (error) {
-        console.log("Location not available");
-      }
 
       const response = await api.post(endpoints.auth.register, formDataObj, {
         headers: {
@@ -172,10 +109,6 @@ const Auth = () => {
   };
 
   const handleInputChange = (field, value) => {
-    if (field === "username") {
-      // Remove spaces from username
-      value = value.replace(/\s/g, "");
-    }
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -187,9 +120,6 @@ const Auth = () => {
       ...prev,
       [field]: true,
     }));
-    if (field === "preference") {
-      setShowPreferenceSuggestions(true);
-    }
   };
 
   const handleBlur = (field) => {
@@ -199,51 +129,9 @@ const Auth = () => {
     }));
   };
 
-  const handlePreferenceInputChange = (e) => {
-    setPreferenceInput(e.target.value);
-    setShowPreferenceSuggestions(true);
-  };
-
-  const handlePreferenceSelect = (pref) => {
-    if (!formData.preferences.includes(pref)) {
-      setFormData((prev) => ({
-        ...prev,
-        preferences: [...prev.preferences, pref],
-      }));
-    }
-    setPreferenceInput("");
-    setShowPreferenceSuggestions(true); // Keep suggestions open for further selections
-  };
-
-  const handlePreferenceRemove = (prefToRemove) => {
-    setFormData((prev) => ({
-      ...prev,
-      preferences: prev.preferences.filter((pref) => pref !== prefToRemove),
-    }));
-  };
-
-  // Handle clicks outside suggestions to close dropdown
-  const handleClickOutside = (event) => {
-    if (
-      suggestionsRef.current &&
-      !suggestionsRef.current.contains(event.target) &&
-      preferenceRef.current &&
-      !preferenceRef.current.contains(event.target)
-    ) {
-      setShowPreferenceSuggestions(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   const renderRegisterForm = () => (
     <div className="w-full flex items-center justify-center">
-      <div className="w-full max-w-md bg-transparent rounded-lg py-4 px-2">
+      <div className="w-full max-w-md bg-gray-900 rounded-lg py-4 px-2">
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             {/* Full Name */}
@@ -261,7 +149,7 @@ const Auth = () => {
                 required
               />
               <label
-                className={`absolute left-3 px-1 text-xs bg-gray-800 transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
                   focusedField.name || formData.name
                     ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
@@ -286,7 +174,7 @@ const Auth = () => {
                 required
               />
               <label
-                className={`absolute left-3 px-1 text-xs bg-gray-800 transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
                   focusedField.username || formData.username
                     ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
@@ -297,7 +185,7 @@ const Auth = () => {
             </div>
 
             {/* Date of Birth and Gender */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 my-1 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="relative">
                 <input
                   ref={dateOfBirthRef}
@@ -314,8 +202,10 @@ const Auth = () => {
                   required
                 />
                 <label
-                  className={`absolute left-3 -top-2.5 px-1 text-xs bg-gray-800 ${
-                    focusedField.dateOfBirth ? "text-blue-400" : "text-gray-400"
+                  className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                    focusedField.dateOfBirth || formData.dateOfBirth
+                      ? "-top-2.5 text-xs text-blue-400"
+                      : "top-2.5 text-sm text-gray-400"
                   }`}
                 >
                   Date of Birth *
@@ -325,11 +215,7 @@ const Auth = () => {
                 <select
                   value={formData.gender}
                   onChange={(e) => handleInputChange("gender", e.target.value)}
-                  onFocus={() => handleFocus("gender")}
-                  onBlur={() => handleBlur("gender")}
-                  className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                    focusedField.gender ? "border-blue-500" : ""
-                  }`}
+                  className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                   required
                 >
                   <option value="">Select Gender</option>
@@ -337,107 +223,89 @@ const Auth = () => {
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
-                <label
-                  className={`absolute left-3 -top-2.5 px-1 text-xs bg-gray-800 ${
-                    focusedField.gender ? "text-blue-400" : "text-gray-400"
-                  }`}
-                >
+                <label className="absolute left-3 -top-2.5 px-1 text-xs text-blue-400 bg-gray-900">
                   Gender *
                 </label>
               </div>
             </div>
 
+            {/* Preference */}
+            <div className="relative">
+              <input
+                ref={preferenceRef}
+                type="text"
+                value={formData.preference}
+                onChange={(e) =>
+                  handleInputChange("preference", e.target.value)
+                }
+                onFocus={() => handleFocus("preference")}
+                onBlur={() => handleBlur("preference")}
+                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  focusedField.preference ? "border-blue-500" : ""
+                }`}
+                placeholder="Enter your preference"
+              />
+              <label
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                  focusedField.preference || formData.preference
+                    ? "-top-2.5 text-xs text-blue-400"
+                    : "top-2.5 text-sm text-gray-400"
+                }`}
+              >
+                Preference
+              </label>
+            </div>
+
             {/* Video Language */}
-            <div className="relative mb-1">
-              <select
+            <div className="relative">
+              <input
+                ref={videoLanguageRef}
+                type="text"
                 value={formData.videoLanguage}
                 onChange={(e) =>
                   handleInputChange("videoLanguage", e.target.value)
                 }
                 onFocus={() => handleFocus("videoLanguage")}
                 onBlur={() => handleBlur("videoLanguage")}
-                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
                   focusedField.videoLanguage ? "border-blue-500" : ""
                 }`}
-              >
-                <option value="">Select Preferred Language</option>
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
+                placeholder="Preferred video language"
+              />
               <label
-                className={`absolute left-3 -top-2.5 px-1 text-xs bg-gray-800 ${
-                  focusedField.videoLanguage ? "text-blue-400" : "text-gray-400"
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                  focusedField.videoLanguage || formData.videoLanguage
+                    ? "-top-2.5 text-xs text-blue-400"
+                    : "top-2.5 text-sm text-gray-400"
                 }`}
               >
                 Video Language
               </label>
             </div>
 
-            {/* Preferences */}
+            {/* Location */}
             <div className="relative">
-              <div className="relative">
-                <input
-                  ref={preferenceRef}
-                  type="text"
-                  value={preferenceInput}
-                  onChange={handlePreferenceInputChange}
-                  onFocus={() => handleFocus("preference")}
-                  onBlur={() => handleBlur("preference")}
-                  className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                    focusedField.preference ? "border-blue-500" : ""
-                  }`}
-                  placeholder="Add preferences"
-                />
-                <label
-                  className={`absolute left-3 -top-2.5 px-1 text-xs bg-gray-800 ${
-                    focusedField.preference ? "text-blue-400" : "text-gray-400"
-                  }`}
-                >
-                  Preferences
-                </label>
-              </div>
-
-              {/* Preference Suggestions */}
-              {showPreferenceSuggestions && preferenceInput && (
-                <div
-                  ref={suggestionsRef}
-                  className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
-                >
-                  {filteredPreferences.map((pref) => (
-                    <div
-                      key={pref}
-                      className="px-3 py-2 text-sm text-gray-200 hover:bg-gray-700 cursor-pointer"
-                      onClick={() => handlePreferenceSelect(pref)}
-                    >
-                      {pref}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Selected Preferences */}
-              {formData.preferences.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {formData.preferences.map((pref) => (
-                    <div
-                      key={pref}
-                      className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-700 text-white"
-                    >
-                      {pref}
-                      <button
-                        type="button"
-                        onClick={() => handlePreferenceRemove(pref)}
-                        className="ml-1.5 hover:text-red-200 focus:outline-none"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <input
+                ref={locationRef}
+                type="text"
+                value={formData.location}
+                onChange={(e) => handleInputChange("location", e.target.value)}
+                onFocus={() => handleFocus("location")}
+                onBlur={() => handleBlur("location")}
+                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  focusedField.location ? "border-blue-500" : ""
+                }`}
+                placeholder="Your location"
+              />
+              <label
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                  focusedField.location || formData.location
+                    ? "-top-2.5 text-xs text-blue-400"
+                    : "top-2.5 text-sm text-gray-400"
+                }`}
+              >
+                Location
+              </label>
             </div>
 
             {/* Profile Photo */}
@@ -469,7 +337,7 @@ const Auth = () => {
                             profilePhoto: null,
                           }));
                         }}
-                        className="absolute top-2 right-2 p-1 bg-gray-800 bg-opacity-50 rounded-full text-gray-200 hover:bg-opacity-70 transition-opacity"
+                        className="absolute top-2 right-2 p-1 bg-gray-900 bg-opacity-50 rounded-full text-gray-200 hover:bg-opacity-70 transition-opacity"
                       >
                         <svg
                           className="w-4 h-4"
@@ -556,32 +424,22 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
-      <div
-        className={`w-full ${
-          !otpSent || (otpVerified && !isRegistered)
-            ? "max-w-[32rem]"
-            : "max-w-md"
-        } bg-gray-800 rounded-md shadow-xl backdrop-blur-lg backdrop-filter`}
-      >
+      <div className="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl backdrop-blur-lg backdrop-filter">
         <div className="p-6 sm:p-8 space-y-6">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-100 mb-2">
               {!otpSent
                 ? "Login / Register"
-                : !otpVerified
-                ? "Verify OTP"
                 : !isRegistered
-                ? "Create Account"
-                : "Verify OTP"}
+                ? "Verify OTP"
+                : "Create Account"}
             </h2>
             <p className="text-gray-400">
               {!otpSent
                 ? "Enter your phone number to get started"
-                : !otpVerified
-                ? "Enter the OTP sent to your phone"
                 : !isRegistered
-                ? "Fill in your details to complete registration"
-                : "Enter the OTP sent to your phone"}
+                ? "Enter the OTP sent to your phone"
+                : "Fill in your details to complete registration"}
             </p>
           </div>
           {error && (
@@ -611,12 +469,10 @@ const Auth = () => {
                 onPhoneChange={handlePhoneChange}
                 onSendOtp={handleSendOtp}
               />
-            ) : !otpVerified ? (
-              <OtpForm />
             ) : !isRegistered ? (
-              renderRegisterForm()
-            ) : (
               <OtpForm />
+            ) : (
+              renderRegisterForm()
             )}
           </div>
         </div>

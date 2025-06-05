@@ -104,11 +104,6 @@ const ProfilePage = () => {
             <button className="bg-yellow-400 text-black text-xs font-semibold px-4 py-1 rounded h-[30px]">
               Access at ₹99/m
             </button>
-            {isOwnProfile && (
-              <button className="bg-yellow-400 text-black text-xs font-semibold px-4 py-1 rounded h-[30px]">
-                Edit Profile
-              </button>
-            )}
           </div>
 
           {/* Social Media Buttons */}
@@ -162,6 +157,19 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      {isOwnProfile && (
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-800 rounded-lg p-4">
+            <h2 className="text-lg font-semibold text-white mb-4">
+              Account Settings
+            </h2>
+            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              Edit Profile
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
