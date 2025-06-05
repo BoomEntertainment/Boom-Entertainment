@@ -99,7 +99,7 @@ const Sidebar = () => {
             <button
               key={item.id}
               onClick={() => handleNavigation(item.id)}
-              className={`flex flex-col font-semibold items-center justify-center w-full h-full transition-colors ${
+              className={`flex flex-col font-semibold items-center justify-center cursor-pointer w-full h-full transition-colors ${
                 activeTab === item.id ? "text-[#f1c40f]" : "text-white"
               }`}
             >
@@ -124,7 +124,7 @@ const Sidebar = () => {
                 <li key={item.id}>
                   <button
                     onClick={() => handleNavigation(item.id)}
-                    className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors hover:bg-gray-800 ${
+                    className={`flex items-center space-x-3 w-full p-3 cursor-pointer rounded-lg transition-colors hover:bg-gray-800 ${
                       activeTab === item.id
                         ? "bg-gray-800 text-[#f2c50f]"
                         : "text-white"

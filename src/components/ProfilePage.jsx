@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchProfile, clearProfile } from "../store/profileSlice";
@@ -21,7 +21,6 @@ const ProfilePage = () => {
 
   const dispatch = useDispatch();
 
-
   // const { username } = useParams();
   // const { currentProfile, loading, error } = useSelector(
   //   (state) => state.profile
@@ -36,7 +35,7 @@ const ProfilePage = () => {
   //     dispatch(clearProfile());
   //   };
   // }, [dispatch, username]);
-   const { username } = useParams();
+  const { username } = useParams();
   const { currentProfile, loading, error } = useSelector(
     (state) => state.profile
   );
@@ -61,7 +60,7 @@ const ProfilePage = () => {
   console.log("Me (Authenticated User):", me);
   console.log("Loading:", loading);
   console.log("Error:", error);
-
+console.log(me.profilePhoto)
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -108,102 +107,106 @@ const ProfilePage = () => {
       {/* Wrapper for responsive layout */}
       <div className="max-w-4xl mx-auto">
         {/* Sidebar Profile Section (left side on large screens) */}
-       <div className=" p-4 lg:py-12 flex flex-col md:flex-row md:gap-8 md:items-start">
-  {/* Left Section - Profile Picture and Social */}
-  <div className="flex flex-col items-center md:items-start ">
-    {/* Mobile Only Top Header */}
-    <div className="flex items-center justify-between w-full md:hidden mb-3">
-      <FaChevronLeft className="text-white" />
-      <h2 className="text-sm font-semibold">{currentProfile.data.user.name}</h2>
-      <div className="flex"><CiBookmark className="text-xl"/> <FiMoreHorizontal className="text-xl" />
-</div>
-     
-    </div>
+        <div className=" p-4 lg:py-12 flex flex-col md:flex-row md:gap-8 md:items-start">
+          {/* Left Section - Profile Picture and Social */}
+          <div className="flex flex-col items-center md:items-start ">
+            {/* Mobile Only Top Header */}
+            <div className="flex items-center justify-between w-full md:hidden mb-3">
+              <FaChevronLeft className="text-white" />
+              <h2 className="text-sm font-semibold">
+                {currentProfile.data.user.name}
+              </h2>
+              <div className="flex">
+                <CiBookmark className="text-xl" />{" "}
+                <FiMoreHorizontal className="text-xl" />
+              </div>
+            </div>
 
-    {/* Avatar */}
-    <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center text-3xl text-white">
-      {<img src={currentProfile.data.user.profilePhoto}/>||currentProfile.data.user.username?.[0]?.toUpperCase()  } 
-    </div>
-    
-    {/* Username for mobile */}
-    <p className="text-sm text-gray-400 mt-1 md:hidden">@{currentProfile.data.user.username}</p>
+            {/* Avatar */}
+            <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center text-3xl text-white">
+              {me.profilePhoto ? (
+                <img src={me.profilePhoto} />
+              ) : (
+                currentProfile.data.user.username?.[0]?.toUpperCase()
+              )}
+            </div>
 
-    {/* Social Media Buttons */}
-    <div className="lg:flex gap-3 mt-3 md:mt-6 hidden">
-        <button className="bg-yellow-400 p-2 rounded">
-        <FaSnapchat className="text-black text-lg" />
-      </button>
-      <button className="bg-yellow-400 p-2 rounded">
-        <FaInstagram className="text-black text-lg" />
-      </button>
-      <button className="bg-yellow-400 p-2 rounded">
-        <FaYoutube className="text-black text-lg" />
-      </button>
-    
-    </div>
-  </div>
+            {/* Username for mobile */}
+            <p className="text-sm text-gray-400 mt-1 md:hidden">
+              @{currentProfile.data.user.username}
+            </p>
 
-  {/* Right Section - Info & Actions */}
-  <div className="mt-4 md:mt-0 flex flex-col items-center md:items-start text-center md:text-left w-full">
-      <div className="flex gap-3 mt-3 md:mt-4 items-center md:items-start">
-      
-    </div>
-    {/* Username and Actions (desktop) */}
-    <div className="flex items-center gap-3 lg:gap-3 px-3">
-      <h2 className="text-2xl hidden lg:block font-semibold text-white mr-10">@{currentProfile.data.user.username}</h2>
-       <p className="text-sm font-semibold flex flex-col lg:mx-3">
-        3.4M{" "}
-        <span className="text-gray-400 font-normal text-xs">Followers</span>
-      </p>
-      <button className="bg-yellow-400 text-black px-3 py-1 rounded text-sm">
-        Follow
-      </button>
-     <button className="bg-yellow-400 text-black text-sm  px-2 py-1 rounded whitespace-nowrap">
-  Access at ₹99/m
-</button>
+            {/* Social Media Buttons */}
+            <div className="lg:flex gap-3 mt-3 md:mt-6 hidden">
+              <button className="bg-yellow-400 p-2 rounded">
+                <FaSnapchat className="text-black text-lg" />
+              </button>
+              <button className="bg-yellow-400 p-2 rounded">
+                <FaInstagram className="text-black text-lg" />
+              </button>
+              <button className="bg-yellow-400 p-2 rounded">
+                <FaYoutube className="text-black text-lg" />
+              </button>
+            </div>
+          </div>
 
-     
-    </div>
+          {/* Right Section - Info & Actions */}
+          <div className="mt-4 md:mt-0 flex flex-col items-center md:items-start text-center md:text-left w-full">
+            <div className="flex gap-3 mt-3 md:mt-4 items-center md:items-start"></div>
+            {/* Username and Actions (desktop) */}
+            <div className="flex items-center gap-3 lg:gap-3 px-3">
+              <h2 className="text-2xl hidden lg:block font-semibold text-white mr-10">
+                @{currentProfile.data.user.username}
+              </h2>
+              <p className="text-sm font-semibold flex flex-col lg:mx-3">
+                3.4M{" "}
+                <span className="text-gray-400 font-normal text-xs">
+                  Followers
+                </span>
+              </p>
+              <button className="bg-yellow-400 text-black px-3 py-1 rounded text-sm">
+                Follow
+              </button>
+              <button className="bg-yellow-400 text-black text-sm  px-2 py-1 rounded whitespace-nowrap">
+                Access at ₹99/m
+              </button>
+            </div>
 
-   
- 
- {isOwnProfile && (
-        <button className="bg-yellow-400 my-4 md:mx-3 text-black text-sm  px-4 py-1 rounded whitespace-nowrap">
-          Edit Profile
-        </button>
-      )}
-      <div className="flex gap-3 mt-3 md:mt-6 lg:hidden">
-        <button className="bg-yellow-400 p-2 rounded">
-        <FaSnapchat className="text-black text-lg" />
-      </button>
-      <button className="bg-yellow-400 p-2 rounded">
-        <FaInstagram className="text-black text-lg" />
-      </button>
-      <button className="bg-yellow-400 p-2 rounded">
-        <FaYoutube className="text-black text-lg" />
-      </button>
-    
-    </div>
-    {/* Hashtags */}
-    <div className="flex gap-2 mt-4 text-xs flex-wrap lg:mx-3">
-      <button className="bg-[#1a1a1a] border border-gray-600 px-2 py-2 rounded">
-        #Style With Us
-      </button>
-      <button className="bg-[#1a1a1a] border border-gray-600 px-2 py-2 rounded">
-        #Style India
-      </button>
-      <button className="bg-yellow-400 text-black px-2 py-1 rounded">
-        More
-      </button>
-    </div>
+            {isOwnProfile && (
+              <button className="bg-yellow-400 my-4 md:mx-3 text-black text-sm  px-4 py-1 rounded whitespace-nowrap">
+                Edit Profile
+              </button>
+            )}
+            <div className="flex gap-3 mt-3 md:mt-6 lg:hidden">
+              <button className="bg-yellow-400 p-2 rounded">
+                <FaSnapchat className="text-black text-lg" />
+              </button>
+              <button className="bg-yellow-400 p-2 rounded">
+                <FaInstagram className="text-black text-lg" />
+              </button>
+              <button className="bg-yellow-400 p-2 rounded">
+                <FaYoutube className="text-black text-lg" />
+              </button>
+            </div>
+            {/* Hashtags */}
+            <div className="flex gap-2 mt-4 text-xs flex-wrap lg:mx-3">
+              <button className="bg-[#1a1a1a] border border-gray-600 px-2 py-2 rounded">
+                #Style With Us
+              </button>
+              <button className="bg-[#1a1a1a] border border-gray-600 px-2 py-2 rounded">
+                #Style India
+              </button>
+              <button className="bg-yellow-400 text-black px-2 py-1 rounded">
+                More
+              </button>
+            </div>
 
-    {/* Bio */}
-    <p className="text-xs text-gray-400 mt-2 lg:mx-3">
-      Fashion enthusiast, DM for Collab
-    </p>
-  </div>
-</div>
-
+            {/* Bio */}
+            <p className="text-xs text-gray-400 mt-2 lg:mx-3">
+              Fashion enthusiast, DM for Collab
+            </p>
+          </div>
+        </div>
 
         {/* Right Section */}
         <div className="flex-1 bg-[#1a1a1a]">
@@ -214,40 +217,52 @@ const ProfilePage = () => {
             <FiHeart className="text-white text-xl cursor-pointer" />
             <CiBookmark className="text-white text-xl cursor-pointer" />
           </div> */}
-<div className="flex max-w-lg justify-around border-t border-gray-800 md:my-4 py-2  md:justify-around  mx-auto md:border-none md:px-4">
-  <div
-    onClick={() => setActiveTab("reels")}
-    className={`cursor-pointer border-b-2 ${
-      activeTab === "reels" ? "border-yellow-400" : "border-transparent"
-    } pb-1`}
-  >
-    <CiPlay1 className="text-white text-xl" />
-  </div>
-  <div
-    onClick={() => setActiveTab("videos")}
-    className={`cursor-pointer border-b-2 ${
-      activeTab === "videos" ? "border-yellow-400" : "border-transparent"
-    } pb-1`}
-  >
-    <FiVideo className="text-white text-xl" />
-  </div>
-  <div
-    onClick={() => setActiveTab("likes")}
-    className={`cursor-pointer border-b-2 ${
-      activeTab === "likes" ? "border-yellow-400" : "border-transparent"
-    } pb-1`}
-  >
-    <FiHeart className="text-white text-xl" />
-  </div>
-  <div
-    onClick={() => setActiveTab("saved")}
-    className={`cursor-pointer border-b-2 ${
-      activeTab === "saved" ? "border-yellow-400" : "border-transparent"
-    } pb-1`}
-  >
-    <CiBookmark className="text-white text-xl" />
-  </div>
-</div>
+          <div className="flex max-w-lg justify-around border-t border-gray-800 md:my-4 py-2  md:justify-around  mx-auto md:border-none md:px-4">
+            <div
+              onClick={() => setActiveTab("reels")}
+              className={`cursor-pointer flex items-center gap-3 border-b-2 ${
+                activeTab === "reels"
+                  ? "border-yellow-400"
+                  : "border-transparent"
+              } pb-1`}
+            >
+              <CiPlay1 className="text-white text-xl" />
+              <span className="text-[12px]">Short Video</span>
+            </div>
+            <div
+              onClick={() => setActiveTab("videos")}
+              className={`cursor-pointer  flex items-center gap-3 border-b-2 ${
+                activeTab === "videos"
+                  ? "border-yellow-400"
+                  : "border-transparent"
+              } pb-1`}
+            >
+              <FiVideo className="text-white text-xl" />
+               <span className="text-[12px]">Long Video</span>
+            </div>
+            <div
+              onClick={() => setActiveTab("likes")}
+              className={`cursor-pointer flex items-center gap-3 border-b-2 ${
+                activeTab === "likes"
+                  ? "border-yellow-400"
+                  : "border-transparent"
+              } pb-1`}
+            >
+              <FiHeart className="text-white text-xl" />
+              <span className="text-[12px]">Liked</span>
+            </div>
+            <div
+              onClick={() => setActiveTab("saved")}
+              className={`cursor-pointer flex items-center gap-3 border-b-2 ${
+                activeTab === "saved"
+                  ? "border-yellow-400"
+                  : "border-transparent"
+              } pb-1`}
+            >
+              <CiBookmark className="text-white text-xl" />
+              <span className="text-[12px]">Saved</span>
+            </div>
+          </div>
 
           {/* Gallery Grid */}
           <div className="grid grid-cols-3 gap-[1px] bg-black">

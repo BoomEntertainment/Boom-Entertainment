@@ -255,13 +255,13 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 onFocus={() => handleFocus("name")}
                 onBlur={() => handleBlur("name")}
-                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                  focusedField.name ? "border-blue-500" : ""
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                  focusedField.name ? "border-[#f1c40f]" : ""
                 }`}
                 required
               />
               <label
-                className={`absolute left-3 px-1 text-xs bg-gray-800 transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-[#1c1c1c] transition-all ${
                   focusedField.name || formData.name
                     ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
@@ -280,13 +280,13 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("username", e.target.value)}
                 onFocus={() => handleFocus("username")}
                 onBlur={() => handleBlur("username")}
-                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                  focusedField.username ? "border-blue-500" : ""
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                  focusedField.username ? "border-[#f1c40f]" : ""
                 }`}
                 required
               />
               <label
-                className={`absolute left-3 px-1 text-xs bg-gray-800 transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-[#1c1c1c] transition-all ${
                   focusedField.username || formData.username
                     ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
@@ -308,13 +308,13 @@ const Auth = () => {
                   }
                   onFocus={() => handleFocus("dateOfBirth")}
                   onBlur={() => handleBlur("dateOfBirth")}
-                  className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                    focusedField.dateOfBirth ? "border-blue-500" : ""
+                  className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                    focusedField.dateOfBirth ? "border-[#f1c40f]" : ""
                   }`}
                   required
                 />
                 <label
-                  className={`absolute left-3 -top-2.5 px-1 text-xs bg-gray-800 ${
+                  className={`absolute left-3 -top-2.5 px-1 text-xs bg-[#1c1c1c] ${
                     focusedField.dateOfBirth ? "text-blue-400" : "text-gray-400"
                   }`}
                 >
@@ -327,8 +327,8 @@ const Auth = () => {
                   onChange={(e) => handleInputChange("gender", e.target.value)}
                   onFocus={() => handleFocus("gender")}
                   onBlur={() => handleBlur("gender")}
-                  className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                    focusedField.gender ? "border-blue-500" : ""
+                  className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                    focusedField.gender ? "border-[#f1c40f]" : ""
                   }`}
                   required
                 >
@@ -338,7 +338,7 @@ const Auth = () => {
                   <option value="other">Other</option>
                 </select>
                 <label
-                  className={`absolute left-3 -top-2.5 px-1 text-xs bg-gray-800 ${
+                  className={`absolute left-3 -top-2.5 px-1 text-xs bg-[#1c1c1c] ${
                     focusedField.gender ? "text-blue-400" : "text-gray-400"
                   }`}
                 >
@@ -356,8 +356,8 @@ const Auth = () => {
                 }
                 onFocus={() => handleFocus("videoLanguage")}
                 onBlur={() => handleBlur("videoLanguage")}
-                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                  focusedField.videoLanguage ? "border-blue-500" : ""
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                  focusedField.videoLanguage ? "border-[#f1c40f]" : ""
                 }`}
               >
                 <option value="">Select Preferred Language</option>
@@ -368,7 +368,7 @@ const Auth = () => {
                 ))}
               </select>
               <label
-                className={`absolute left-3 -top-2.5 px-1 text-xs bg-gray-800 ${
+                className={`absolute left-3 -top-2.5 px-1 text-xs bg-[#1c1c1c] ${
                   focusedField.videoLanguage ? "text-blue-400" : "text-gray-400"
                 }`}
               >
@@ -386,13 +386,13 @@ const Auth = () => {
                   onChange={handlePreferenceInputChange}
                   onFocus={() => handleFocus("preference")}
                   onBlur={() => handleBlur("preference")}
-                  className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                    focusedField.preference ? "border-blue-500" : ""
+                  className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                    focusedField.preference ? "border-[#f1c40f]" : ""
                   }`}
                   placeholder="Add preferences"
                 />
                 <label
-                  className={`absolute left-3 -top-2.5 px-1 text-xs bg-gray-800 ${
+                  className={`absolute left-3 -top-2.5 px-1 text-xs bg-[#1c1c1c] ${
                     focusedField.preference ? "text-blue-400" : "text-gray-400"
                   }`}
                 >
@@ -404,7 +404,7 @@ const Auth = () => {
               {showPreferenceSuggestions && preferenceInput && (
                 <div
                   ref={suggestionsRef}
-                  className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                  className="absolute z-10 w-full mt-1 bg-[#1c1c1c] border border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
                 >
                   {filteredPreferences.map((pref) => (
                     <div
@@ -450,7 +450,7 @@ const Auth = () => {
                   className={`w-[200px] aspect-square rounded-lg border-2 border-dashed transition-colors ${
                     previewUrl
                       ? "border-gray-700"
-                      : "border-gray-700 group-hover:border-blue-500"
+                      : "border-gray-700 group-hover:border-[#f1c40f]"
                   }`}
                 >
                   {previewUrl ? (
@@ -469,7 +469,7 @@ const Auth = () => {
                             profilePhoto: null,
                           }));
                         }}
-                        className="absolute top-2 right-2 p-1 bg-gray-800 bg-opacity-50 rounded-full text-gray-200 hover:bg-opacity-70 transition-opacity"
+                        className="absolute top-2 right-2 p-1 bg-[#1c1c1c] bg-opacity-50 rounded-full text-gray-200 hover:bg-opacity-70 transition-opacity"
                       >
                         <svg
                           className="w-4 h-4"
@@ -519,7 +519,7 @@ const Auth = () => {
           <button
             type="submit"
             disabled={isRegistering}
-            className="w-full py-2.5 px-4 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-2.5 px-4 bg-[#f1c40f] text-[#1a1a1a] text-sm font-semibold rounded-lg hover:bg-[white] hover:text-black focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isRegistering ? (
               <div className="flex items-center justify-center">
@@ -555,13 +555,13 @@ const Auth = () => {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#1a1a1a] p-4">
       <div
         className={`w-full ${
           !otpSent || (otpVerified && !isRegistered)
             ? "max-w-[32rem]"
             : "max-w-md"
-        } bg-gray-800 rounded-md shadow-xl backdrop-blur-lg backdrop-filter`}
+        } bg-[#1c1c1c]   rounded-md shadow-2xl backdrop-blur-lg backdrop-filter`}
       >
         <div className="p-6 sm:p-8 space-y-6">
           <div className="text-center">
