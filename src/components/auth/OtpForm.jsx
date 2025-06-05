@@ -48,7 +48,7 @@ const OtpForm = () => {
         await handleLogin();
       } else {
         dispatch(setIsRegistered(false));
-        navigate("/register");
+        dispatch(setOtpVerified(true));
       }
     } catch (error) {
       dispatch(
