@@ -93,7 +93,7 @@ const OtpForm = () => {
               <input
                 type="tel"
                 value={phoneNumber || ""}
-                className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-400 cursor-not-allowed"
+                className="w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-400 cursor-not-allowed"
                 disabled
               />
               <button
@@ -102,7 +102,7 @@ const OtpForm = () => {
                   dispatch(setOtpSent(false));
                   setOtp("");
                 }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-blue-400 hover:text-blue-300 font-medium"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-[#f1c40f] hover:text-blue-300 font-medium"
               >
                 Change
               </button>
@@ -131,7 +131,7 @@ const OtpForm = () => {
             type="button"
             onClick={() => handleVerifyOtp()}
             disabled={loading || isVerifying || otp.length !== 6}
-            className="w-full py-2.5 px-4 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-2.5 px-4 bg-[#f1c40f] text-white text-sm font-semibold rounded-lg hover:bg-white hover:text-black focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading || isVerifying ? (
               <div className="flex items-center justify-center">

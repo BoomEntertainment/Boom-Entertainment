@@ -85,7 +85,7 @@ const PhoneForm = () => {
                 id="phone"
                 value={localPhoneNumber}
                 onChange={handlePhoneChange}
-                className="flex-1 px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-r-lg text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors"
+                className="flex-1 px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-r-lg text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors"
                 placeholder="Enter phone number"
                 required
                 inputMode="numeric"
@@ -100,7 +100,7 @@ const PhoneForm = () => {
 
           <button
             type="submit"
-            className="w-full py-2.5 px-4 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:border-gray-600 transition-colors"
+            className="w-full py-2.5 px-4 bg-[#f1c40f] text-black text-sm font-semibold rounded-lg hover:bg-white focus:outline-none focus:border-gray-600 transition-colors"
           >
             {loading ? (
               <div className="flex items-center justify-center">

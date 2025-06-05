@@ -143,8 +143,8 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 onFocus={() => handleFocus("name")}
                 onBlur={() => handleBlur("name")}
-                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                  focusedField.name ? "border-blue-500" : ""
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                  focusedField.name ? "border-[#f1c40f]" : ""
                 }`}
                 required
               />
@@ -168,8 +168,8 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("username", e.target.value)}
                 onFocus={() => handleFocus("username")}
                 onBlur={() => handleBlur("username")}
-                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                  focusedField.username ? "border-blue-500" : ""
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                  focusedField.username ? "border-[#f1c40f]" : ""
                 }`}
                 required
               />
@@ -196,8 +196,8 @@ const Auth = () => {
                   }
                   onFocus={() => handleFocus("dateOfBirth")}
                   onBlur={() => handleBlur("dateOfBirth")}
-                  className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
-                    focusedField.dateOfBirth ? "border-blue-500" : ""
+                  className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                    focusedField.dateOfBirth ? "border-[#f1c40f]" : ""
                   }`}
                   required
                 />
@@ -318,7 +318,7 @@ const Auth = () => {
                   className={`w-[200px] aspect-square rounded-lg border-2 border-dashed transition-colors ${
                     previewUrl
                       ? "border-gray-700"
-                      : "border-gray-700 group-hover:border-blue-500"
+                      : "border-gray-700 group-hover:border-[#f1c40f]"
                   }`}
                 >
                   {previewUrl ? (
@@ -387,7 +387,7 @@ const Auth = () => {
           <button
             type="submit"
             disabled={isRegistering}
-            className="w-full py-2.5 px-4 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-2.5 px-4 bg-[#f1c40f] text-[#1a1a1a] text-sm font-semibold rounded-lg hover:bg-[white] hover:text-black focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isRegistering ? (
               <div className="flex items-center justify-center">

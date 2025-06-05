@@ -95,7 +95,7 @@ const CountryCode = ({ onCountryCodeChange }) => {
       <button
         type="button"
         disabled
-        className="flex items-center gap-2 px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-l-lg text-sm text-gray-400"
+        className="flex items-center gap-2 px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-l-lg text-sm text-gray-400"
       >
         Loading...
       </button>
@@ -107,7 +107,7 @@ const CountryCode = ({ onCountryCodeChange }) => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-l-lg text-sm text-gray-200 hover:bg-gray-700 transition-colors"
+        className="flex items-center gap-2 px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-l-lg text-sm text-gray-200 hover:bg-gray-700 transition-colors"
       >
         {selectedCountry?.flag ? (
           <img

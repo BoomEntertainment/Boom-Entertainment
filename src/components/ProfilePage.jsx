@@ -144,7 +144,6 @@ const ProfilePage = () => {
                 </span>
               )}
             </div>
-
             <p className="text-sm text-gray-400 mt-1 md:hidden">
               @{currentProfile.data.user.username}
             </p>
@@ -227,7 +226,6 @@ const ProfilePage = () => {
                 </span>
               </p>
             </div>
-
             <p className="text-xs text-gray-400 mt-2 lg:mx-3">
               Fashion enthusiast, DM for Collab
             </p>
