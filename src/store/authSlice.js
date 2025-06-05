@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   user: null,
   token: localStorage.getItem("token") || null,
-  isAuthenticated: !!localStorage.getItem("token"),
   loading: false,
   error: null,
   otpSent: false,
@@ -36,7 +35,6 @@ const authSlice = createSlice({
     },
     setUser: (state, action) => {
       state.user = action.payload;
-      state.isAuthenticated = true;
     },
     setToken: (state, action) => {
       state.token = action.payload;
@@ -49,10 +47,14 @@ const authSlice = createSlice({
     setOtpVerified: (state, action) => {
       state.otpVerified = action.payload;
     },
+    clearToken: (state) => {
+      state.token = null;
+      state.user = null;
+      localStorage.removeItem("token");
+    },
     logout: (state) => {
       state.user = null;
       state.token = null;
-      state.isAuthenticated = false;
       state.otpSent = false;
       state.phoneNumber = null;
       state.isRegistered = false;
@@ -71,6 +73,7 @@ export const {
   setUser,
   setToken,
   setOtpVerified,
+  clearToken,
   logout,
 } = authSlice.actions;
 

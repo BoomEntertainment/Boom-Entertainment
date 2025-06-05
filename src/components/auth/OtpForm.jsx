@@ -21,7 +21,7 @@ const OtpForm = () => {
   const [isVerifying, setIsVerifying] = useState(false);
 
   const handleOtpChange = (value) => {
-    if (isVerifying) return; // Prevent changes while verifying
+    if (isVerifying) return;
     setOtp(value);
     if (value.length === 6) {
       handleVerifyOtp(value);

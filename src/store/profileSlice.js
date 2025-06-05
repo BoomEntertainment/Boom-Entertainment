@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api, endpoints } from "../api/config";
+import { setUser } from "./authSlice";
 
 // Async thunks
 export const fetchProfile = createAsyncThunk(
@@ -18,9 +19,10 @@ export const fetchProfile = createAsyncThunk(
 
 export const fetchMe = createAsyncThunk(
   "profile/fetchMe",
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       const response = await api.get(endpoints.auth.me);
+      dispatch(setUser(response.data.data.user));
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -32,7 +34,6 @@ export const fetchMe = createAsyncThunk(
 
 const initialState = {
   currentProfile: null,
-  me: null,
   loading: false,
   error: null,
 };
@@ -66,9 +67,8 @@ const profileSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchMe.fulfilled, (state, action) => {
+      .addCase(fetchMe.fulfilled, (state) => {
         state.loading = false;
-        state.me = action.payload;
       })
       .addCase(fetchMe.rejected, (state, action) => {
         state.loading = false;

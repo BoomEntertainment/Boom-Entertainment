@@ -51,6 +51,6 @@ export const endpoints = {
     withdraw: "/wallet/withdraw",
   },
   profile: {
-    getProfile: (username) => `/profile/${username}`,
+    getProfile: (username) => `/auth/profile/${username}`,
   },
 };

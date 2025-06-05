@@ -12,11 +12,15 @@ import { FaWallet, FaLock } from "react-icons/fa";
 
 const Wallet = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const { balance, history, pagination, loading, error, filters } = useSelector(
     (state) => state.wallet
   );
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -91,7 +95,7 @@ const Wallet = () => {
     return true;
   });
 
-  if (!isAuthenticated) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-gray-900 rounded-2xl shadow-xl p-8 text-center border border-gray-800">
