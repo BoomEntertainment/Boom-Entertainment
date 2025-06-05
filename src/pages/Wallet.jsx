@@ -9,6 +9,8 @@ import DepositModal from "../components/wallet/DepositModal";
 import WithdrawModal from "../components/wallet/WithdrawModal";
 import { useNavigate } from "react-router-dom";
 import { FaWallet, FaLock } from "react-icons/fa";
+import { FaChevronLeft } from "react-icons/fa6";
+import { IoIosMore } from "react-icons/io";
 
 const Wallet = () => {
   const dispatch = useDispatch();
@@ -98,7 +100,7 @@ const Wallet = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-gray-900 rounded-2xl shadow-xl p-8 text-center border border-gray-800">
+        <div className="max-w-md w-full bg-[#1c1c1c] rounded-2xl shadow-xl p-8 text-center border border-gray-800">
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center">
               <FaLock className="text-4xl text-yellow-400" />
@@ -137,39 +139,52 @@ const Wallet = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {error && (
+<div className="mobileheader flex items-center justify-between mb-5 lg:hidden">
+    <h3><FaChevronLeft /></h3>
+    <h3 className="text-lg font-poppins">My Wallet</h3>
+     
+    <IoIosMore className="text-xl font-bold"/>
+
+   </div>
+     {/* {error && (
         <div className="mb-4 p-4 bg-red-900/50 text-red-200 rounded-lg border border-red-700">
           {error}
         </div>
       )}
-
-      <div className="mb-8">
-        <div className="bg-gray-900 rounded-2xl shadow-xl p-8 text-center border border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-300 mb-2">
-            Wallet Balance
-          </h2>
-          <p className="text-4xl font-bold text-white mb-6">₹{balance}</p>
-          <div className="flex justify-center gap-4">
+    */}
+      <div className="mb-8 md:mb-8">
+        <div className=" rounded-2xl shadow-xl md:p-8 text-center border border-[#252525]">
+        <h3 className="text-white text-2xl font-semibold mb-2 hidden lg:block">MY WALLET</h3>
+         <div className="bg-[#1c1c1c] rounded-lg px-4  py-3 md:py-6 md:mb-6 flex items-start justify-between">
+          <div className="flex flex-col mb-2">
+            <p className="text-sm text-gray-400">Total balance</p>
+                      <p className="text-2xl font-semibold text-left">₹ {balance}</p>
+          </div>
+        </div>
+           <div className="flex flex-col lg:flex-row  justify-start gap-2 md:gap-4 mb-4">
             <button
               onClick={() => setShowDepositModal(true)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+              className="py-1 mx-3 md:mx-0 md:px-6 md:py-3 bg-[#f1c40f] text-black rounded-lg hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
             >
-              Add Money
+              Add Credit
             </button>
             <button
               onClick={() => setShowWithdrawModal(true)}
               disabled={balance <= 0}
-              className={`px-6 py-3 border border-blue-600 text-blue-400 rounded-lg hover:bg-blue-900/50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+              className={`py-1  mx-3 md:mx-0 md:px-6 md:py-3 border bg-[#f1c40f] border-gray-600 text-black rounded-lg hover:bg-[white] transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
                 balance <= 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              Withdraw
+              Withdraw Now
             </button>
           </div>
+        
         </div>
+      
       </div>
+      
 
-      <div className="bg-gray-900 rounded-2xl shadow-xl p-6 border border-gray-700">
+      <div className=" rounded-2xl shadow-xl p-6 border border-gray-700">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-white">
             Transaction History
@@ -190,7 +205,7 @@ const Wallet = () => {
             <select
               value={filters.type}
               onChange={(e) => handleFilterChange("type", e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+              className="w-full px-4 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
             >
               <option value="all">All Types</option>
               <option value="payin">Pay In</option>
@@ -222,7 +237,7 @@ const Wallet = () => {
               onChange={(e) =>
                 handleFilterChange("transactionType", e.target.value)
               }
-              className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+              className="w-full px-4 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
             >
               <option value="all">All Categories</option>
               <option value="recharge">Recharge</option>
@@ -255,7 +270,7 @@ const Wallet = () => {
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange("status", e.target.value)}
-              className="w-full px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+              className="w-full px-4 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
             >
               <option value="all">All Status</option>
               <option value="completed">Completed</option>
@@ -288,7 +303,7 @@ const Wallet = () => {
           <>
             <div className="overflow-x-auto rounded-lg border border-gray-700">
               <table className="min-w-full divide-y divide-gray-700">
-                <thead className="bg-gray-800">
+                <thead className="bg-[#1c1c1c]">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                       Date
@@ -371,7 +386,7 @@ const Wallet = () => {
             )}
           </>
         )}
-      </div>
+      </div> 
 
       <DepositModal
         show={showDepositModal}
