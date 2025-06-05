@@ -98,7 +98,6 @@ const AppContent = () => {
     </Routes>
   );
 };
-
 function App() {
   return (
     <Provider store={store}>
