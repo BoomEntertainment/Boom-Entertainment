@@ -43,10 +43,14 @@ export const endpoints = {
     verifyOtp: "/auth/verify-otp",
     register: "/auth/register",
     login: "/auth/login",
+    me: "/auth/me",
   },
   wallet: {
     getWallet: "/wallet",
     addMoney: "/wallet/add",
     withdraw: "/wallet/withdraw",
+  },
+  profile: {
+    getProfile: (username) => `/profile/${username}`,
   },
 };

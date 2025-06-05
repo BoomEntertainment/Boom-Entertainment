@@ -7,12 +7,16 @@ import {
 } from "../store/walletSlice";
 import DepositModal from "../components/wallet/DepositModal";
 import WithdrawModal from "../components/wallet/WithdrawModal";
+import { useNavigate } from "react-router-dom";
+import { FaWallet, FaLock } from "react-icons/fa";
 
 const Wallet = () => {
   const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const { balance, history, pagination, loading, error, filters } = useSelector(
     (state) => state.wallet
   );
+  const navigate = useNavigate();
 
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -86,6 +90,46 @@ const Wallet = () => {
 
     return true;
   });
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#1a1a1a] flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-gray-900 rounded-2xl shadow-xl p-8 text-center border border-gray-800">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 rounded-full bg-gray-800 flex items-center justify-center">
+              <FaLock className="text-4xl text-yellow-400" />
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Access Your Wallet
+          </h2>
+          <p className="text-gray-400 mb-8">
+            Login or create an account to manage your wallet, add money, and
+            withdraw your earnings.
+          </p>
+          <div className="space-y-4">
+            <button
+              onClick={() => navigate("/auth")}
+              className="w-full bg-yellow-400 text-black font-semibold py-3 px-6 rounded-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2"
+            >
+              <FaWallet className="text-lg" />
+              Login to Access Wallet
+            </button>
+
+            <p className="text-sm text-gray-500">
+              Don't have an account?{" "}
+              <button
+                onClick={() => navigate("/auth?tab=register")}
+                className="text-yellow-400 hover:text-yellow-300 font-medium"
+              >
+                Register Now
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

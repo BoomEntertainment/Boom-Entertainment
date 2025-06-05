@@ -9,6 +9,7 @@ const initialState = {
   otpSent: false,
   phoneNumber: null,
   isRegistered: false,
+  otpVerified: false,
 };
 
 const authSlice = createSlice({
@@ -45,6 +46,9 @@ const authSlice = createSlice({
         localStorage.removeItem("token");
       }
     },
+    setOtpVerified: (state, action) => {
+      state.otpVerified = action.payload;
+    },
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -52,6 +56,7 @@ const authSlice = createSlice({
       state.otpSent = false;
       state.phoneNumber = null;
       state.isRegistered = false;
+      state.otpVerified = false;
       localStorage.removeItem("token");
     },
   },
@@ -65,6 +70,7 @@ export const {
   setIsRegistered,
   setUser,
   setToken,
+  setOtpVerified,
   logout,
 } = authSlice.actions;
 

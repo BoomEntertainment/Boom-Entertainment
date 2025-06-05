@@ -11,8 +11,8 @@ import {
   setToken,
   setUser,
 } from "../store/authSlice";
-import PhoneForm from "../components/auth/auth/PhoneForm";
-import OtpForm from "../components/auth/auth/OtpForm";
+import PhoneForm from "../components/auth/PhoneForm";
+import OtpForm from "../components/auth/OtpForm";
 
 const Auth = () => {
   const dispatch = useDispatch();
@@ -131,7 +131,7 @@ const Auth = () => {
 
   const renderRegisterForm = () => (
     <div className="w-full flex items-center justify-center">
-      <div className="w-full max-w-md bg-white rounded-lg py-4 px-2">
+      <div className="w-full max-w-md bg-gray-900 rounded-lg py-4 px-2">
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             {/* Full Name */}
@@ -143,15 +143,15 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 onFocus={() => handleFocus("name")}
                 onBlur={() => handleBlur("name")}
-                className={`w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-transparent peer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors ${
-                  focusedField.name ? "border-primary" : ""
+                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  focusedField.name ? "border-blue-500" : ""
                 }`}
                 required
               />
               <label
-                className={`absolute left-3 px-1 text-xs text-gray-600 bg-white transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
                   focusedField.name || formData.name
-                    ? "-top-2.5 text-xs text-gray-600"
+                    ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
                 }`}
               >
@@ -168,15 +168,15 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("username", e.target.value)}
                 onFocus={() => handleFocus("username")}
                 onBlur={() => handleBlur("username")}
-                className={`w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-transparent peer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors ${
-                  focusedField.username ? "border-primary" : ""
+                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  focusedField.username ? "border-blue-500" : ""
                 }`}
                 required
               />
               <label
-                className={`absolute left-3 px-1 text-xs text-gray-600 bg-white transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
                   focusedField.username || formData.username
-                    ? "-top-2.5 text-xs text-gray-600"
+                    ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
                 }`}
               >
@@ -196,15 +196,15 @@ const Auth = () => {
                   }
                   onFocus={() => handleFocus("dateOfBirth")}
                   onBlur={() => handleBlur("dateOfBirth")}
-                  className={`w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-transparent peer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors ${
-                    focusedField.dateOfBirth ? "border-primary" : ""
+                  className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                    focusedField.dateOfBirth ? "border-blue-500" : ""
                   }`}
                   required
                 />
                 <label
-                  className={`absolute left-3 px-1 text-xs text-gray-600 bg-white transition-all ${
+                  className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
                     focusedField.dateOfBirth || formData.dateOfBirth
-                      ? "-top-2.5 text-xs text-gray-600"
+                      ? "-top-2.5 text-xs text-blue-400"
                       : "top-2.5 text-sm text-gray-400"
                   }`}
                 >
@@ -215,7 +215,7 @@ const Auth = () => {
                 <select
                   value={formData.gender}
                   onChange={(e) => handleInputChange("gender", e.target.value)}
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm peer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                  className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
                   required
                 >
                   <option value="">Select Gender</option>
@@ -223,7 +223,7 @@ const Auth = () => {
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
-                <label className="absolute left-3 -top-2.5 px-1 text-xs text-gray-600 bg-white">
+                <label className="absolute left-3 -top-2.5 px-1 text-xs text-blue-400 bg-gray-900">
                   Gender *
                 </label>
               </div>
@@ -240,15 +240,15 @@ const Auth = () => {
                 }
                 onFocus={() => handleFocus("preference")}
                 onBlur={() => handleBlur("preference")}
-                className={`w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-transparent peer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors ${
-                  focusedField.preference ? "border-primary" : ""
+                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  focusedField.preference ? "border-blue-500" : ""
                 }`}
                 placeholder="Enter your preference"
               />
               <label
-                className={`absolute left-3 px-1 text-xs text-gray-600 bg-white transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
                   focusedField.preference || formData.preference
-                    ? "-top-2.5 text-xs text-gray-600"
+                    ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
                 }`}
               >
@@ -267,15 +267,15 @@ const Auth = () => {
                 }
                 onFocus={() => handleFocus("videoLanguage")}
                 onBlur={() => handleBlur("videoLanguage")}
-                className={`w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-transparent peer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors ${
-                  focusedField.videoLanguage ? "border-primary" : ""
+                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  focusedField.videoLanguage ? "border-blue-500" : ""
                 }`}
                 placeholder="Preferred video language"
               />
               <label
-                className={`absolute left-3 px-1 text-xs text-gray-600 bg-white transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
                   focusedField.videoLanguage || formData.videoLanguage
-                    ? "-top-2.5 text-xs text-gray-600"
+                    ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
                 }`}
               >
@@ -292,15 +292,15 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("location", e.target.value)}
                 onFocus={() => handleFocus("location")}
                 onBlur={() => handleBlur("location")}
-                className={`w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm placeholder-transparent peer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors ${
-                  focusedField.location ? "border-primary" : ""
+                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                  focusedField.location ? "border-blue-500" : ""
                 }`}
                 placeholder="Your location"
               />
               <label
-                className={`absolute left-3 px-1 text-xs text-gray-600 bg-white transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
                   focusedField.location || formData.location
-                    ? "-top-2.5 text-xs text-gray-600"
+                    ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
                 }`}
               >
@@ -310,15 +310,15 @@ const Auth = () => {
 
             {/* Profile Photo */}
             <div className="space-y-2">
-              <label className="block text-xs text-gray-600">
+              <label className="block text-xs text-gray-400">
                 Profile Photo
               </label>
               <div className="relative group">
                 <div
                   className={`w-[200px] aspect-square rounded-lg border-2 border-dashed transition-colors ${
                     previewUrl
-                      ? "border-gray-300"
-                      : "border-gray-300 group-hover:border-primary"
+                      ? "border-gray-700"
+                      : "border-gray-700 group-hover:border-blue-500"
                   }`}
                 >
                   {previewUrl ? (
@@ -337,7 +337,7 @@ const Auth = () => {
                             profilePhoto: null,
                           }));
                         }}
-                        className="absolute top-2 right-2 p-1 bg-[#1a1a1a] bg-opacity-50 rounded-full text-white hover:bg-opacity-70 transition-opacity"
+                        className="absolute top-2 right-2 p-1 bg-gray-900 bg-opacity-50 rounded-full text-gray-200 hover:bg-opacity-70 transition-opacity"
                       >
                         <svg
                           className="w-4 h-4"
@@ -357,7 +357,7 @@ const Auth = () => {
                   ) : (
                     <label className="flex flex-col items-center justify-center w-full h-full cursor-pointer">
                       <svg
-                        className="w-12 h-12 text-gray-400"
+                        className="w-12 h-12 text-gray-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -369,7 +369,7 @@ const Auth = () => {
                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                         />
                       </svg>
-                      <span className="mt-2 text-sm text-gray-500">
+                      <span className="mt-2 text-sm text-gray-400">
                         Click to upload photo
                       </span>
                       <input
@@ -387,7 +387,7 @@ const Auth = () => {
           <button
             type="submit"
             disabled={isRegistering}
-            className="w-full py-2.5 px-4 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-2.5 px-4 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isRegistering ? (
               <div className="flex items-center justify-center">
@@ -423,18 +423,18 @@ const Auth = () => {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl backdrop-blur-lg backdrop-filter">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
+      <div className="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl backdrop-blur-lg backdrop-filter">
         <div className="p-6 sm:p-8 space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-gray-100 mb-2">
               {!otpSent
                 ? "Login / Register"
                 : !isRegistered
                 ? "Verify OTP"
                 : "Create Account"}
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-400">
               {!otpSent
                 ? "Enter your phone number to get started"
                 : !isRegistered
@@ -444,7 +444,7 @@ const Auth = () => {
           </div>
           {error && (
             <div
-              className="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg flex items-center space-x-3"
+              className="bg-red-900/50 border-l-4 border-red-500 p-4 rounded-lg flex items-center space-x-3"
               role="alert"
             >
               <svg
@@ -458,7 +458,7 @@ const Auth = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="text-red-700 text-sm">{error}</span>
+              <span className="text-red-200 text-sm">{error}</span>
             </div>
           )}
           <div className="mt-6">
