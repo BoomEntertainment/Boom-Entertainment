@@ -20,20 +20,47 @@ const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("reels"); // default tab
 
   const dispatch = useDispatch();
-  const { username } = useParams();
+
+
+  // const { username } = useParams();
+  // const { currentProfile, loading, error } = useSelector(
+  //   (state) => state.profile
+  // );
+  // const { me } = useSelector((state) => state.profile);
+
+  // useEffect(() => {
+  //   if (username) {
+  //     dispatch(fetchProfile(username));
+  //   }
+  //   return () => {
+  //     dispatch(clearProfile());
+  //   };
+  // }, [dispatch, username]);
+   const { username } = useParams();
   const { currentProfile, loading, error } = useSelector(
     (state) => state.profile
   );
-  const { me } = useSelector((state) => state.profile);
+  const { user: me } = useSelector((state) => state.auth); // Access user from authSlice
 
   useEffect(() => {
+    console.log("Username from URL:", username); // Log the username from useParams
     if (username) {
+      console.log("Dispatching fetchProfile for username:", username);
       dispatch(fetchProfile(username));
     }
     return () => {
+      console.log("Clearing profile on unmount");
       dispatch(clearProfile());
     };
   }, [dispatch, username]);
+
+  // Log the entire Redux state for debugging
+  const entireState = useSelector((state) => state);
+  console.log("Entire Redux State:", entireState);
+  console.log("Current Profile:", currentProfile);
+  console.log("Me (Authenticated User):", me);
+  console.log("Loading:", loading);
+  console.log("Error:", error);
 
   if (loading) {
     return (
@@ -77,17 +104,17 @@ const ProfilePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] text-white font-poppins w-full overflow-hidden">
+    <div className="min-h-screen container bg-[#1a1a1a] text-white font-poppins w-full overflow-hidden">
       {/* Wrapper for responsive layout */}
-      <div className="max-w-full mx-auto">
+      <div className="max-w-4xl mx-auto">
         {/* Sidebar Profile Section (left side on large screens) */}
-       <div className="md:border-r md:border-gray-800 p-4 lg:py-12 flex flex-col md:flex-row md:gap-8 md:items-start">
+       <div className=" p-4 lg:py-12 flex flex-col md:flex-row md:gap-8 md:items-start">
   {/* Left Section - Profile Picture and Social */}
   <div className="flex flex-col items-center md:items-start ">
     {/* Mobile Only Top Header */}
     <div className="flex items-center justify-between w-full md:hidden mb-3">
       <FaChevronLeft className="text-white" />
-      <h2 className="text-sm font-semibold">{currentProfile.username}</h2>
+      <h2 className="text-sm font-semibold">{currentProfile.data.user.name}</h2>
       <div className="flex"><CiBookmark className="text-xl"/> <FiMoreHorizontal className="text-xl" />
 </div>
      
@@ -95,11 +122,11 @@ const ProfilePage = () => {
 
     {/* Avatar */}
     <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center text-3xl text-white">
-      {currentProfile.username?.[0]?.toUpperCase() || "?"}
+      {<img src={currentProfile.data.user.profilePhoto}/>||currentProfile.data.user.username?.[0]?.toUpperCase()  } 
     </div>
     
     {/* Username for mobile */}
-    <p className="text-sm text-gray-400 mt-1 md:hidden">@Gabar_32</p>
+    <p className="text-sm text-gray-400 mt-1 md:hidden">@{currentProfile.data.user.username}</p>
 
     {/* Social Media Buttons */}
     <div className="lg:flex gap-3 mt-3 md:mt-6 hidden">
@@ -123,7 +150,7 @@ const ProfilePage = () => {
     </div>
     {/* Username and Actions (desktop) */}
     <div className="flex items-center gap-3 lg:gap-3 px-3">
-      <h2 className="text-2xl hidden lg:block font-semibold text-white mr-10">@Gabar_32</h2>
+      <h2 className="text-2xl hidden lg:block font-semibold text-white mr-10">@{currentProfile.data.user.username}</h2>
        <p className="text-sm font-semibold flex flex-col lg:mx-3">
         3.4M{" "}
         <span className="text-gray-400 font-normal text-xs">Followers</span>
@@ -187,7 +214,7 @@ const ProfilePage = () => {
             <FiHeart className="text-white text-xl cursor-pointer" />
             <CiBookmark className="text-white text-xl cursor-pointer" />
           </div> */}
-<div className="flex max-w-full justify-around border-t border-gray-800 md:my-4 py-2  md:justify-around md:border-none md:px-4">
+<div className="flex max-w-lg justify-around border-t border-gray-800 md:my-4 py-2  md:justify-around  mx-auto md:border-none md:px-4">
   <div
     onClick={() => setActiveTab("reels")}
     className={`cursor-pointer border-b-2 ${
