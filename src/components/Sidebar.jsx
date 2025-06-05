@@ -42,33 +42,39 @@ const Sidebar = () => {
   const navigationItems = [
     {
       id: "Short Video",
-      icon: <CiPlay1 className="text-[26px] md:text-[24px] font-semibold" />,
+      icon: <CiPlay1 className="text-md font-semibold" />,
       label: "Short Video",
     },
     {
       id: "Long Video",
-      icon: <FiVideo className="text-[26px] md:text-[24px] font-semibold" />,
+      icon: <FiVideo className="text-md font-semibold" />,
       label: "Long Video",
     },
     {
       id: "add",
-      icon: <CgAddR className="text-[26px] md:text-[24px] font-semibold" />,
+      icon: <CgAddR className="text-md font-semibold" />,
       label: "Add",
     },
     {
       id: "Search",
-      icon: <FiSearch className="text-[26px] md:text-[24px] font-semibold" />,
+      icon: <FiSearch className="text-md font-semibold" />,
       label: "Search",
     },
     {
       id: "profile",
       icon: (
-        <div className="w-7 h-7 rounded-full bg-[#1a1a1a] border-2 border-gray-400 overflow-hidden">
-          <img
-            src={user?.profilePicture || "profile.jpg"}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
+        <div className="w-7 h-7 rounded-full bg-[#1a1a1a] border-2 border-gray-400 overflow-hidden flex items-center justify-center">
+          {user?.profilePicture ? (
+            <img
+              src={user.profilePicture}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-white font-semibold">
+              {user?.username?.charAt(0).toUpperCase()}
+            </span>
+          )}
         </div>
       ),
       label: "Profile",
@@ -76,16 +82,12 @@ const Sidebar = () => {
     !user
       ? {
           id: "Login",
-          icon: (
-            <IoIosLogIn className="text-[26px] md:text-[24px] font-semibold" />
-          ),
+          icon: <IoIosLogIn className="text-md font-semibold" />,
           label: "Login",
         }
       : {
           id: "Logout",
-          icon: (
-            <IoIosLogOut className="text-[26px] md:text-[24px] font-semibold" />
-          ),
+          icon: <IoIosLogOut className="text-md font-semibold" />,
           label: "Logout",
         },
   ];
@@ -114,7 +116,7 @@ const Sidebar = () => {
         <div className="flex flex-col w-full">
           {/* Logo */}
           <div className="p-6">
-            <h1 className="text-2xl font-bold">BOOM ENTERTAINMENTS</h1>
+            <h1 className="text-lg font-bold">BOOM MVP</h1>
           </div>
           {/* Navigation Items */}
           <nav className="flex-1 p-4">
@@ -130,7 +132,7 @@ const Sidebar = () => {
                     }`}
                   >
                     {item.icon}
-                    <span className="text-lg">{item.label}</span>
+                    <span className="text-sm mt-[0.5px]">{item.label}</span>
                   </button>
                 </li>
               ))}
