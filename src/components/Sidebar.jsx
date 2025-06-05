@@ -116,7 +116,6 @@ const Sidebar = () => {
           <div className="p-6">
             <h1 className="text-2xl font-bold">BOOM ENTERTAINMENTS</h1>
           </div>
-
           {/* Navigation Items */}
           <nav className="flex-1 p-4">
             <ul className="space-y-2">
