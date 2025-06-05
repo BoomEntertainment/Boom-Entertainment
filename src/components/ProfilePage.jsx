@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchProfile, clearProfile } from "../store/profileSlice";
+import { logout } from "../store/authSlice";
 import { FaInstagram, FaSnapchat, FaYoutube } from "react-icons/fa";
-
 import {
   FiMoreHorizontal,
   FiHeart,
@@ -15,56 +15,52 @@ import {
 import { CiPlay1 } from "react-icons/ci";
 import { FaChevronLeft } from "react-icons/fa6";
 import { CiBookmark } from "react-icons/ci";
+import { IoIosLogOut } from "react-icons/io";
 
 const ProfilePage = () => {
-  const [activeTab, setActiveTab] = useState("reels"); // default tab
-
+  const [activeTab, setActiveTab] = useState("reels");
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const moreMenuRef = useRef(null);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const { username } = useParams();
-  // const { currentProfile, loading, error } = useSelector(
-  //   (state) => state.profile
-  // );
-  // const { me } = useSelector((state) => state.profile);
-
-  // useEffect(() => {
-  //   if (username) {
-  //     dispatch(fetchProfile(username));
-  //   }
-  //   return () => {
-  //     dispatch(clearProfile());
-  //   };
-  // }, [dispatch, username]);
   const { username } = useParams();
   const { currentProfile, loading, error } = useSelector(
     (state) => state.profile
   );
-  const { user: me } = useSelector((state) => state.auth); // Access user from authSlice
+  const { user: me } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    console.log("Username from URL:", username); // Log the username from useParams
-    if (username) {
-      console.log("Dispatching fetchProfile for username:", username);
+    if (username && !loading && !currentProfile) {
       dispatch(fetchProfile(username));
     }
     return () => {
-      console.log("Clearing profile on unmount");
       dispatch(clearProfile());
     };
   }, [dispatch, username]);
 
-  // Log the entire Redux state for debugging
-  const entireState = useSelector((state) => state);
-  console.log("Entire Redux State:", entireState);
-  console.log("Current Profile:", currentProfile);
-  console.log("Me (Authenticated User):", me);
-  console.log("Loading:", loading);
-  console.log("Error:", error);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target)) {
+        setShowMoreMenu(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/auth");
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-300"></div>
       </div>
     );
   }
@@ -88,7 +84,7 @@ const ProfilePage = () => {
     );
   }
 
-  const isOwnProfile = me?.username === currentProfile.username;
+  const isOwnProfile = me?.username === currentProfile.data.user.username;
 
   const images = [
     "https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d",
@@ -104,25 +100,37 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen container bg-[#1a1a1a] text-white font-poppins w-full overflow-hidden">
-      {/* Wrapper for responsive layout */}
       <div className="max-w-4xl mx-auto">
-        {/* Sidebar Profile Section (left side on large screens) */}
-        <div className=" p-4 lg:py-12 flex flex-col md:flex-row md:gap-8 md:items-start">
-          {/* Left Section - Profile Picture and Social */}
-          <div className="flex flex-col items-center md:items-start ">
-            {/* Mobile Only Top Header */}
-            <div className="flex items-center justify-between w-full md:hidden mb-3">
+        <div className="p-4 lg:py-12 flex flex-col md:flex-row md:gap-8 md:items-start">
+          <div className="flex flex-col items-center md:items-start">
+            <div className="fixed top-0 left-0 right-0 bg-[#1a1a1a] z-50 flex items-center justify-between w-full md:hidden p-4 border-b border-gray-800">
               <FaChevronLeft className="text-white" />
               <h2 className="text-sm font-semibold">
                 {currentProfile.data.user.name}
               </h2>
-              <div className="flex gap-1.5">
-                <CiBookmark className="text-xl" />{" "}
-                <FiMoreHorizontal className="text-xl" />
+              <div className="flex gap-1.5 relative" ref={moreMenuRef}>
+                <FiMoreHorizontal
+                  className="text-xl cursor-pointer"
+                  onClick={() => setShowMoreMenu(!showMoreMenu)}
+                />
+                {showMoreMenu && (
+                  <div className="absolute right-0 top-8 w-48 bg-[#2a2a2a] rounded-lg shadow-lg py-2 z-50">
+                    {isOwnProfile && (
+                      <button
+                        onClick={handleLogout}
+                        className="w-full px-4 py-1 text-left text-sm text-white hover:bg-[#3a3a3a] flex items-center gap-2"
+                      >
+                        <IoIosLogOut className="text-lg" />
+                        Logout
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Avatar */}
+            <div className="w-full h-16 md:h-0"></div>
+
             <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center text-3xl text-white overflow-hidden">
               {currentProfile.data.user.profilePhoto ? (
                 <img
@@ -137,17 +145,19 @@ const ProfilePage = () => {
               )}
             </div>
 
-            {/* Username for mobile */}
             <p className="text-sm text-gray-400 mt-1 md:hidden">
               @{currentProfile.data.user.username}
             </p>
 
-            {/* Full Name for mobile */}
-            <p className="text-sm font-semibold mt-1 md:hidden">
-              {currentProfile.data.user.name}
-            </p>
+            <div className="md:hidden flex items-center gap-4 mt-2">
+              <p className="text-sm font-semibold flex items-center justify-center flex-col">
+                3.4M{" "}
+                <span className="text-gray-400 font-normal text-xs">
+                  Followers
+                </span>
+              </p>
+            </div>
 
-            {/* Social Media Buttons */}
             <div className="lg:flex gap-3 mt-3 md:mt-6 hidden">
               <button className="bg-yellow-400 p-2 rounded">
                 <FaSnapchat className="text-black text-lg" />
@@ -161,12 +171,10 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Right Section - Info & Actions */}
-          <div className="mt-4 md:mt-0 flex flex-col items-center md:items-start text-center md:text-left w-full">
+          <div className="mt-2 mb-2 md:mt-0 flex flex-col items-center md:items-start text-center md:text-left w-full">
             <div className="flex gap-3 mt-3 md:mt-4 items-center md:items-start"></div>
-            {/* Username and Actions (desktop) */}
-            <div className="flex items-center gap-3 lg:gap-3 px-3">
-              <div className="hidden lg:flex justify-center flex-col">
+            <div className="flex lg:w-full items-center gap-3 lg:gap-3 px-3">
+              <div className="hidden lg:w-full lg:flex justify-between flex-col">
                 <h2 className="text-2xl font-semibold text-white">
                   @{currentProfile.data.user.username}
                 </h2>
@@ -182,7 +190,7 @@ const ProfilePage = () => {
                   </button>
                 )}
                 <button className="bg-yellow-400 text-black text-sm px-2 py-1 rounded whitespace-nowrap">
-                  Access at ₹99/m
+                  Join at ₹99/m
                 </button>
               </div>
             </div>
@@ -198,7 +206,7 @@ const ProfilePage = () => {
                 <FaYoutube className="text-black text-lg" />
               </button>
             </div>
-            {/* Hashtags */}
+
             <div className="flex gap-2 mt-4 text-xs flex-wrap lg:mx-3">
               <button className="bg-[#1a1a1a] border border-gray-600 px-2 py-2 rounded">
                 #Style With Us
@@ -211,9 +219,8 @@ const ProfilePage = () => {
               </button>
             </div>
 
-            {/* Followers count - moved below hashtags for medium and above screens */}
             <div className="hidden md:flex items-center gap-4 mt-4 lg:mx-3">
-              <p className="text-sm font-semibold flex flex-col">
+              <p className="text-sm font-semibold flex items-center justify-center flex-col">
                 3.4M{" "}
                 <span className="text-gray-400 font-normal text-xs">
                   Followers
@@ -221,23 +228,14 @@ const ProfilePage = () => {
               </p>
             </div>
 
-            {/* Bio */}
             <p className="text-xs text-gray-400 mt-2 lg:mx-3">
               Fashion enthusiast, DM for Collab
             </p>
           </div>
         </div>
 
-        {/* Right Section */}
         <div className="flex-1 bg-[#1a1a1a]">
-          {/* Tabs */}
-          {/* <div className="flex w-full justify-around border-t border-gray-800 md:my-4 py-2 md:gap-40 md:justify-center md:border-none md:px-4">
-            <CiPlay1 className="text-white text-xl cursor-pointer" />
-            <FiVideo className="text-white text-xl cursor-pointer" />
-            <FiHeart className="text-white text-xl cursor-pointer" />
-            <CiBookmark className="text-white text-xl cursor-pointer" />
-          </div> */}
-          <div className="flex max-w-lg justify-around border-t border-gray-800 md:my-4 py-2  md:justify-around  mx-auto md:border-none md:px-4">
+          <div className="flex max-w-lg justify-around border-t border-gray-800 md:my-4 py-2 md:justify-around mx-auto md:border-none md:px-4">
             <div
               onClick={() => setActiveTab("reels")}
               className={`cursor-pointer border-b-2 ${
@@ -280,7 +278,6 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Gallery Grid */}
           <div className="grid grid-cols-3 gap-[1px] bg-black">
             {images.map((url, i) => (
               <img
@@ -293,19 +290,6 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
-
-      {isOwnProfile && (
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-800 rounded-lg p-4">
-            <h2 className="text-lg font-semibold text-white mb-4">
-              Account Settings
-            </h2>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              Edit Profile
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
