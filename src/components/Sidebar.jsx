@@ -39,63 +39,70 @@ const Sidebar = () => {
     }
   };
 
-  const navigationItems = [
+  const mainNavigationItems = [
     {
       id: "Short Video",
-      icon: <CiPlay1 className="text-[26px] md:text-[24px] font-semibold" />,
+      icon: <CiPlay1 className="text-[1.25rem] lg:text-md font-semibold" />,
       label: "Short Video",
     },
     {
       id: "Long Video",
-      icon: <FiVideo className="text-[26px] md:text-[24px] font-semibold" />,
+      icon: <FiVideo className="text-[1.25rem] lg:text-md font-semibold" />,
       label: "Long Video",
     },
     {
       id: "add",
-      icon: <CgAddR className="text-[26px] md:text-[24px] font-semibold" />,
+      icon: <CgAddR className="text-[1.25rem] lg:text-md font-semibold" />,
       label: "Add",
     },
     {
       id: "Search",
-      icon: <FiSearch className="text-[26px] md:text-[24px] font-semibold" />,
+      icon: <FiSearch className="text-[1.25rem] lg:text-md font-semibold" />,
       label: "Search",
     },
     {
       id: "profile",
       icon: (
-        <div className="w-7 h-7 rounded-full bg-[#1a1a1a] border-2 border-gray-400 overflow-hidden">
-          <img
-            src={user?.profilePicture || "profile.jpg"}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
+        <div className="w-7 h-7 rounded-full bg-[#1a1a1a] border-2 border-gray-400 overflow-hidden flex items-center justify-center">
+          {user?.profilePicture ? (
+            <img
+              src={user.profilePicture}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-white font-semibold">
+              {user?.username?.charAt(0).toUpperCase()}
+            </span>
+          )}
         </div>
       ),
       label: "Profile",
     },
-    !user
-      ? {
-          id: "Login",
-          icon: (
-            <IoIosLogIn className="text-[26px] md:text-[24px] font-semibold" />
-          ),
-          label: "Login",
-        }
-      : {
-          id: "Logout",
-          icon: (
-            <IoIosLogOut className="text-[26px] md:text-[24px] font-semibold" />
-          ),
-          label: "Logout",
-        },
   ];
+
+  const authNavigationItem = !user
+    ? {
+        id: "Login",
+        icon: (
+          <IoIosLogIn className="text-[1.25rem] lg:text-md font-semibold" />
+        ),
+        label: "Login",
+      }
+    : {
+        id: "Logout",
+        icon: (
+          <IoIosLogOut className="text-[1.25rem] lg:text-md font-semibold" />
+        ),
+        label: "Logout",
+      };
 
   return (
     <>
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1a1a1a] text-white z-50 pb-4">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1a1a1a] text-white z-50">
         <div className="flex justify-around items-center h-12">
-          {navigationItems.map((item) => (
+          {mainNavigationItems.map((item) => (
             <button
               key={item.id}
               onClick={() => handleNavigation(item.id)}
@@ -111,16 +118,16 @@ const Sidebar = () => {
 
       {/* Desktop Left Sidebar */}
       <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-[#1a1a1a] text-white border-r border-gray-800 z-40">
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full h-full">
           {/* Logo */}
           <div className="p-6">
-            <h1 className="text-2xl font-bold">BOOM ENTERTAINMENTS</h1>
+            <h1 className="text-lg font-bold">BOOM MVP</h1>
           </div>
 
-          {/* Navigation Items */}
+          {/* Main Navigation Items */}
           <nav className="flex-1 p-4">
             <ul className="space-y-2">
-              {navigationItems.map((item) => (
+              {mainNavigationItems.map((item) => (
                 <li key={item.id}>
                   <button
                     onClick={() => handleNavigation(item.id)}
@@ -131,12 +138,29 @@ const Sidebar = () => {
                     }`}
                   >
                     {item.icon}
-                    <span className="text-lg">{item.label}</span>
+                    <span className="text-sm mt-[0.5px]">{item.label}</span>
                   </button>
                 </li>
               ))}
             </ul>
           </nav>
+
+          {/* Auth Navigation Item at bottom */}
+          <div className="p-4 border-t border-gray-800">
+            <button
+              onClick={() => handleNavigation(authNavigationItem.id)}
+              className={`flex items-center space-x-3 w-full p-3 rounded-lg transition-colors hover:bg-gray-800 ${
+                activeTab === authNavigationItem.id
+                  ? "bg-gray-800 text-[#f2c50f]"
+                  : "text-white"
+              }`}
+            >
+              {authNavigationItem.icon}
+              <span className="text-sm mt-[0.5px]">
+                {authNavigationItem.label}
+              </span>
+            </button>
+          </div>
         </div>
       </aside>
     </>
