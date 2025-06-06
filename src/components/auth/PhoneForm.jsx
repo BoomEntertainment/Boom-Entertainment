@@ -7,7 +7,9 @@ import {
 } from "../../store/authSlice";
 import { api, endpoints } from "../../api/config";
 import CountryCode from "./CountryCode";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { auth } from "../../services/firebase";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 const PhoneForm = () => {
   const dispatch = useDispatch();
@@ -16,6 +18,35 @@ const PhoneForm = () => {
   );
   const [localPhoneNumber, setLocalPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
+  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
+
+  const setupRecaptcha = useCallback(() => {
+    if (!recaptchaVerifier) {
+      const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible",
+        callback: () => {
+          // reCAPTCHA solved, allow signInWithPhoneNumber.
+        },
+        "expired-callback": () => {
+          // Reset the reCAPTCHA
+          if (recaptchaVerifier) {
+            recaptchaVerifier.clear();
+            setupRecaptcha();
+          }
+        },
+      });
+      setRecaptchaVerifier(verifier);
+    }
+  }, [recaptchaVerifier]);
+
+  useEffect(() => {
+    setupRecaptcha();
+    return () => {
+      if (recaptchaVerifier) {
+        recaptchaVerifier.clear();
+      }
+    };
+  }, [setupRecaptcha]);
 
   // Initialize local phone number from stored phone number if it exists
   useEffect(() => {
@@ -54,14 +85,54 @@ const PhoneForm = () => {
     const fullPhoneNumber = countryCode + localPhoneNumber;
     try {
       dispatch(setLoading(true));
-      const response = await api.post(endpoints.auth.sendOtp, {
+
+      // First, inform backend about the phone verification attempt
+      await api.post(endpoints.auth.sendOtp, {
         phone: fullPhoneNumber,
       });
+
+      if (!recaptchaVerifier) {
+        throw new Error("reCAPTCHA not initialized");
+      }
+
+      // Then initiate Firebase phone verification
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        fullPhoneNumber,
+        recaptchaVerifier
+      );
+
+      // Store the confirmation result for later use
+      window.confirmationResult = confirmationResult;
+
       dispatch(setPhoneNumber(fullPhoneNumber));
       dispatch(setOtpSent(true));
-      console.log("OTP:", response.data);
+      dispatch(setError(null));
     } catch (error) {
-      dispatch(setError(error.response?.data?.message || "Failed to send OTP"));
+      console.error("Error sending OTP:", error);
+
+      // Handle specific Firebase errors
+      if (error.code === "auth/billing-not-enabled") {
+        dispatch(
+          setError(
+            "Phone authentication is not enabled. Please contact support."
+          )
+        );
+      } else if (error.code === "auth/invalid-phone-number") {
+        dispatch(setError("Invalid phone number format"));
+      } else if (error.code === "auth/too-many-requests") {
+        dispatch(setError("Too many attempts. Please try again later."));
+      } else {
+        dispatch(
+          setError(error.response?.data?.message || "Failed to send OTP")
+        );
+      }
+
+      // Reset reCAPTCHA on error
+      if (recaptchaVerifier) {
+        recaptchaVerifier.clear();
+        setupRecaptcha();
+      }
     } finally {
       dispatch(setLoading(false));
     }
@@ -74,7 +145,7 @@ const PhoneForm = () => {
           <div>
             <label
               htmlFor="phone"
-              className="block text-sm font-medium text-gray-200 mb-2"
+              className="block text-sm font-medium text-white mb-2"
             >
               Phone Number
             </label>
@@ -85,7 +156,7 @@ const PhoneForm = () => {
                 id="phone"
                 value={localPhoneNumber}
                 onChange={handlePhoneChange}
-                className="flex-1 px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-r-lg text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors"
+                className="flex-1 px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-r-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#f1c40f] focus:ring-1 focus:ring-[#f1c40f] transition-colors"
                 placeholder="Enter phone number"
                 required
                 inputMode="numeric"
@@ -98,14 +169,17 @@ const PhoneForm = () => {
             </p>
           </div>
 
+          <div id="recaptcha-container"></div>
+
           <button
             type="submit"
-            className="w-full py-2.5 px-4 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:border-gray-600 transition-colors"
+            disabled={loading || !recaptchaVerifier}
+            className="w-full py-2.5 px-4 bg-[#f1c40f] text-black text-sm font-semibold rounded-lg hover:bg-[#f2c50f] focus:outline-none focus:ring-2 focus:ring-[#f1c40f] focus:ring-offset-2 focus:ring-offset-[#1a1a1a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? (
               <div className="flex items-center justify-center">
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-black"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

@@ -36,21 +36,33 @@ const OtpForm = () => {
     try {
       setIsVerifying(true);
       dispatch(setLoading(true));
+
+      // Verify OTP with Firebase
+      const confirmationResult = window.confirmationResult;
+      if (!confirmationResult) {
+        throw new Error("No confirmation result found. Please try again.");
+      }
+
+      const firebaseResult = await confirmationResult.confirm(otpValue);
+      const firebaseToken = await firebaseResult.user.getIdToken();
+
+      // After Firebase verification, verify with our backend
       const response = await api.post(endpoints.auth.verifyOtp, {
         phone: phoneNumber,
-        otp: otpValue,
+        firebaseToken,
       });
 
       dispatch(setOtpVerified(true));
 
       if (response.data.isRegistered) {
         localStorage.setItem("token", response.data.token);
-        await handleLogin();
+        await handleLogin(firebaseToken);
       } else {
         dispatch(setIsRegistered(false));
         navigate("/register");
       }
     } catch (error) {
+      console.error("OTP verification error:", error);
       dispatch(
         setError(error.response?.data?.message || "Failed to verify OTP")
       );
@@ -61,10 +73,11 @@ const OtpForm = () => {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (firebaseToken) => {
     try {
       const response = await api.post(endpoints.auth.login, {
         phone: phoneNumber,
+        firebaseToken,
       });
       if (response.data.token) {
         dispatch(setToken(response.data.token));
@@ -85,7 +98,7 @@ const OtpForm = () => {
           <div>
             <label
               htmlFor="phone"
-              className="block text-sm font-medium text-gray-200 mb-2"
+              className="block text-sm font-medium text-white mb-2"
             >
               Phone Number
             </label>
@@ -93,7 +106,7 @@ const OtpForm = () => {
               <input
                 type="tel"
                 value={phoneNumber || ""}
-                className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-400 cursor-not-allowed"
+                className="w-full px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-lg text-sm text-gray-400 cursor-not-allowed"
                 disabled
               />
               <button
@@ -102,7 +115,7 @@ const OtpForm = () => {
                   dispatch(setOtpSent(false));
                   setOtp("");
                 }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-blue-400 hover:text-blue-300 font-medium"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-[#f1c40f] hover:text-[#f2c50f] font-medium"
               >
                 Change
               </button>
@@ -112,7 +125,7 @@ const OtpForm = () => {
           <div>
             <label
               htmlFor="otp"
-              className="block text-sm font-medium text-gray-200 mb-2"
+              className="block text-sm font-medium text-white mb-2"
             >
               Enter OTP
             </label>
@@ -122,7 +135,7 @@ const OtpForm = () => {
               numInputs={6}
               disabled={loading || isVerifying}
             />
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-3 text-xs text-gray-400">
               Enter the 6-digit code sent to your phone
             </p>
           </div>
@@ -131,12 +144,12 @@ const OtpForm = () => {
             type="button"
             onClick={() => handleVerifyOtp()}
             disabled={loading || isVerifying || otp.length !== 6}
-            className="w-full py-2.5 px-4 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-2.5 px-4 bg-[#f1c40f] text-black text-sm font-semibold rounded-lg hover:bg-[#f2c50f] focus:outline-none focus:ring-2 focus:ring-[#f1c40f] focus:ring-offset-2 focus:ring-offset-[#1a1a1a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading || isVerifying ? (
               <div className="flex items-center justify-center">
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-black"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
