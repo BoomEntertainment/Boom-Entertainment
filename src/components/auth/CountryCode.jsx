@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 
 const defaultCountry = {
   code: "+91",
@@ -15,8 +15,24 @@ const CountryCode = ({ onCountryCodeChange }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const dropdownRef = useRef(null);
+  const hasInitialized = useRef(false);
 
+  // Memoize the country selection callback
+  const handleCountrySelect = useCallback(
+    (country) => {
+      setSelectedCountry(country);
+      setIsOpen(false);
+      setSearchTerm("");
+      onCountryCodeChange(country.code);
+    },
+    [onCountryCodeChange]
+  );
+
+  // Fetch countries only once when component mounts
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     const fetchCountries = async () => {
       try {
         const response = await fetch(
@@ -61,7 +77,7 @@ const CountryCode = ({ onCountryCodeChange }) => {
     };
 
     fetchCountries();
-  }, [onCountryCodeChange]);
+  }, []); // Empty dependency array since we only want to fetch once
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -83,19 +99,12 @@ const CountryCode = ({ onCountryCodeChange }) => {
     return nameMatch || codeMatch;
   });
 
-  const handleCountrySelect = (country) => {
-    setSelectedCountry(country);
-    setIsOpen(false);
-    setSearchTerm("");
-    onCountryCodeChange(country.code);
-  };
-
   if (loading) {
     return (
       <button
         type="button"
         disabled
-        className="flex items-center gap-2 px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-l-lg text-sm text-gray-400"
+        className="flex items-center gap-2 px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-l-lg text-sm text-gray-400"
       >
         Loading...
       </button>
@@ -107,7 +116,7 @@ const CountryCode = ({ onCountryCodeChange }) => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-l-lg text-sm text-gray-200 hover:bg-gray-700 transition-colors"
+        className="flex items-center gap-2 px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-l-lg text-sm text-white hover:bg-[#252525] transition-colors"
       >
         {selectedCountry?.flag ? (
           <img
@@ -141,14 +150,14 @@ const CountryCode = ({ onCountryCodeChange }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute z-10 mt-1 w-64 bg-gray-800 rounded-lg shadow-lg border border-gray-700 max-h-60 overflow-hidden">
-          <div className="p-2 border-b border-gray-700">
+        <div className="absolute z-10 mt-1 w-64 bg-[#1a1a1a] rounded-lg shadow-lg border border-[#252525] max-h-60 overflow-hidden">
+          <div className="p-2 border-b border-[#252525]">
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search country or code..."
-              className="w-full px-3 py-2 text-sm bg-gray-900 border border-gray-700 rounded-lg text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gray-600"
+              className="w-full px-3 py-2 text-sm bg-[#1c1c1c] border border-[#303030] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#f1c40f] focus:ring-1 focus:ring-[#f1c40f]"
             />
           </div>
           <div className="overflow-y-auto max-h-48">
@@ -156,10 +165,10 @@ const CountryCode = ({ onCountryCodeChange }) => {
               <button
                 key={country.id}
                 onClick={() => handleCountrySelect(country)}
-                className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-700 flex items-center gap-2 ${
+                className={`w-full px-4 py-2 text-left text-sm hover:bg-[#252525] flex items-center gap-2 ${
                   selectedCountry?.id === country.id
-                    ? "bg-gray-700 text-blue-400"
-                    : "text-gray-200"
+                    ? "bg-[#252525] text-[#f1c40f]"
+                    : "text-white"
                 }`}
               >
                 {country.flag ? (

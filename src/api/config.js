@@ -53,4 +53,14 @@ export const endpoints = {
   profile: {
     getProfile: (username) => `/auth/profile/${username}`,
   },
+  community: {
+    getAll: "/community",
+    getUserCommunities: "/community/user",
+    getCommunity: (id) => `/community/${id}`,
+    create: "/community",
+    update: (id) => `/community/${id}`,
+    follow: (id) => `/community/${id}/follow`,
+    becomeCreator: (id) => `/community/${id}/creator`,
+    getMembers: (id) => `/community/${id}/members`,
+  },
 };

@@ -131,7 +131,7 @@ const Auth = () => {
 
   const renderRegisterForm = () => (
     <div className="w-full flex items-center justify-center">
-      <div className="w-full max-w-md bg-gray-900 rounded-lg py-4 px-2">
+      <div className="w-full max-w-md bg-[#1a1a1a] rounded-lg py-4 px-2">
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="grid grid-cols-1 gap-4">
             {/* Full Name */}
@@ -143,13 +143,13 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 onFocus={() => handleFocus("name")}
                 onBlur={() => handleBlur("name")}
-                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-lg text-sm text-white placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1 transition-colors ${
                   focusedField.name ? "border-[#f1c40f]" : ""
                 }`}
                 required
               />
               <label
-                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-[#1a1a1a] transition-all ${
                   focusedField.name || formData.name
                     ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
@@ -168,13 +168,13 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("username", e.target.value)}
                 onFocus={() => handleFocus("username")}
                 onBlur={() => handleBlur("username")}
-                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-lg text-sm text-white placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1 transition-colors ${
                   focusedField.username ? "border-[#f1c40f]" : ""
                 }`}
                 required
               />
               <label
-                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-[#1a1a1a] transition-all ${
                   focusedField.username || formData.username
                     ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
@@ -196,13 +196,13 @@ const Auth = () => {
                   }
                   onFocus={() => handleFocus("dateOfBirth")}
                   onBlur={() => handleBlur("dateOfBirth")}
-                  className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1  transition-colors ${
+                  className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-lg text-sm text-white placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1 transition-colors ${
                     focusedField.dateOfBirth ? "border-[#f1c40f]" : ""
                   }`}
                   required
                 />
                 <label
-                  className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                  className={`absolute left-3 px-1 text-xs bg-[#1a1a1a] transition-all ${
                     focusedField.dateOfBirth || formData.dateOfBirth
                       ? "-top-2.5 text-xs text-blue-400"
                       : "top-2.5 text-sm text-gray-400"
@@ -215,7 +215,7 @@ const Auth = () => {
                 <select
                   value={formData.gender}
                   onChange={(e) => handleInputChange("gender", e.target.value)}
-                  className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                  className="w-full px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-lg text-sm text-white focus:outline-none focus:border-[#f1c40f] focus:ring-1 focus:ring-[#f1c40f] transition-colors"
                   required
                 >
                   <option value="">Select Gender</option>
@@ -223,7 +223,7 @@ const Auth = () => {
                   <option value="female">Female</option>
                   <option value="other">Other</option>
                 </select>
-                <label className="absolute left-3 -top-2.5 px-1 text-xs text-blue-400 bg-gray-900">
+                <label className="absolute left-3 -top-2.5 px-1 text-xs text-blue-400 bg-[#1a1a1a]">
                   Gender *
                 </label>
               </div>
@@ -240,13 +240,13 @@ const Auth = () => {
                 }
                 onFocus={() => handleFocus("preference")}
                 onBlur={() => handleBlur("preference")}
-                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-lg text-sm text-white placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1 transition-colors ${
                   focusedField.preference ? "border-blue-500" : ""
                 }`}
                 placeholder="Enter your preference"
               />
               <label
-                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-[#1a1a1a] transition-all ${
                   focusedField.preference || formData.preference
                     ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
@@ -267,13 +267,13 @@ const Auth = () => {
                 }
                 onFocus={() => handleFocus("videoLanguage")}
                 onBlur={() => handleBlur("videoLanguage")}
-                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-lg text-sm text-white placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1 transition-colors ${
                   focusedField.videoLanguage ? "border-blue-500" : ""
                 }`}
                 placeholder="Preferred video language"
               />
               <label
-                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-[#1a1a1a] transition-all ${
                   focusedField.videoLanguage || formData.videoLanguage
                     ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
@@ -292,13 +292,13 @@ const Auth = () => {
                 onChange={(e) => handleInputChange("location", e.target.value)}
                 onFocus={() => handleFocus("location")}
                 onBlur={() => handleBlur("location")}
-                className={`w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder-transparent peer focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors ${
+                className={`w-full px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-lg text-sm text-white placeholder-transparent peer focus:outline-none focus:border-[#f1c40f] focus:ring-1 transition-colors ${
                   focusedField.location ? "border-blue-500" : ""
                 }`}
                 placeholder="Your location"
               />
               <label
-                className={`absolute left-3 px-1 text-xs bg-gray-900 transition-all ${
+                className={`absolute left-3 px-1 text-xs bg-[#1a1a1a] transition-all ${
                   focusedField.location || formData.location
                     ? "-top-2.5 text-xs text-blue-400"
                     : "top-2.5 text-sm text-gray-400"
@@ -317,8 +317,8 @@ const Auth = () => {
                 <div
                   className={`w-[200px] aspect-square rounded-lg border-2 border-dashed transition-colors ${
                     previewUrl
-                      ? "border-gray-700"
-                      : "border-gray-700 group-hover:border-[#f1c40f]"
+                      ? "border-[#303030]"
+                      : "border-[#303030] group-hover:border-[#f1c40f]"
                   }`}
                 >
                   {previewUrl ? (
@@ -337,7 +337,7 @@ const Auth = () => {
                             profilePhoto: null,
                           }));
                         }}
-                        className="absolute top-2 right-2 p-1 bg-gray-900 bg-opacity-50 rounded-full text-gray-200 hover:bg-opacity-70 transition-opacity"
+                        className="absolute top-2 right-2 p-1 bg-[#1a1a1a] bg-opacity-50 rounded-full text-white hover:bg-opacity-70 transition-opacity"
                       >
                         <svg
                           className="w-4 h-4"
@@ -387,7 +387,7 @@ const Auth = () => {
           <button
             type="submit"
             disabled={isRegistering}
-            className="w-full py-2.5 px-4 bg-[#f1c40f] text-[#1a1a1a] text-sm font-semibold rounded-lg hover:bg-[white] hover:text-black focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-2.5 px-4 bg-[#f1c40f] text-black text-sm font-semibold rounded-lg hover:bg-[#f2c50f] focus:outline-none focus:ring-2 focus:ring-[#f1c40f] focus:ring-offset-2 focus:ring-offset-[#1a1a1a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isRegistering ? (
               <div className="flex items-center justify-center">
@@ -423,18 +423,18 @@ const Auth = () => {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4">
-      <div className="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl backdrop-blur-lg backdrop-filter">
+    <div className="min-h-screen flex items-center justify-center bg-[#1a1a1a] p-4">
+      <div className="w-full max-w-md bg-[#1a1a1a] rounded-lg border border-[#252525] shadow-xl">
         <div className="p-6 sm:p-8 space-y-6">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-100 mb-2">
+            <h2 className="text-xl font-semibold text-white mb-2">
               {!otpSent
                 ? "Login / Register"
                 : !isRegistered
                 ? "Verify OTP"
                 : "Create Account"}
             </h2>
-            <p className="text-gray-400">
+            <p className="text-sm text-gray-400">
               {!otpSent
                 ? "Enter your phone number to get started"
                 : !isRegistered
@@ -444,7 +444,7 @@ const Auth = () => {
           </div>
           {error && (
             <div
-              className="bg-red-900/50 border-l-4 border-red-500 p-4 rounded-lg flex items-center space-x-3"
+              className="bg-red-900/20 border-l-4 border-red-500 p-4 rounded-lg flex items-center space-x-3"
               role="alert"
             >
               <svg
@@ -458,7 +458,7 @@ const Auth = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="text-red-200 text-sm">{error}</span>
+              <span className="text-sm text-red-200">{error}</span>
             </div>
           )}
           <div className="mt-6">

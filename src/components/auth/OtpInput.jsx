@@ -76,7 +76,7 @@ const OtpInput = ({ value, onChange, onComplete }) => {
           onChange={(e) => handleChange(index, e.target.value)}
           onKeyDown={(e) => handleKeyDown(index, e)}
           onPaste={handlePaste}
-          className="w-12 h-12 text-center text-2xl font-semibold bg-[#1c1c1c] border border-gray-700 rounded-lg text-gray-200 focus:outline-none focus:border-gray-600 transition-colors"
+          className="w-10 h-10 text-center text-2xl font-semibold bg-[#1c1c1c] border border-[#303030] rounded-lg text-white focus:outline-none focus:border-[#f1c40f] focus:ring-1 focus:ring-[#f1c40f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         />
       ))}
     </div>

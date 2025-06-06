@@ -74,7 +74,7 @@ const PhoneForm = () => {
           <div>
             <label
               htmlFor="phone"
-              className="block text-sm font-medium text-gray-200 mb-2"
+              className="block text-sm font-medium text-white mb-2"
             >
               Phone Number
             </label>
@@ -85,7 +85,7 @@ const PhoneForm = () => {
                 id="phone"
                 value={localPhoneNumber}
                 onChange={handlePhoneChange}
-                className="flex-1 px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-r-lg text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gray-600 transition-colors"
+                className="flex-1 px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-r-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#f1c40f] focus:ring-[#f1c40f] transition-colors"
                 placeholder="Enter phone number"
                 required
                 inputMode="numeric"
@@ -100,12 +100,12 @@ const PhoneForm = () => {
 
           <button
             type="submit"
-            className="w-full py-2.5 px-4 bg-[#f1c40f] text-black text-sm font-semibold rounded-lg hover:bg-white focus:outline-none focus:border-gray-600 transition-colors"
+            className="w-full py-2.5 px-4 bg-[#f1c40f] text-black text-sm font-semibold rounded-lg hover:bg-[#f2c50f] focus:outline-none focus:ring-2 focus:ring-[#f1c40f] focus:ring-offset-2 focus:ring-offset-[#1a1a1a] transition-colors"
           >
             {loading ? (
               <div className="flex items-center justify-center">
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-black"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

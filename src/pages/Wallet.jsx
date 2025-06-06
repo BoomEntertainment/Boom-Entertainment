@@ -20,23 +20,48 @@ const Wallet = () => {
   );
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
-
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchWalletAndHistory());
+    dispatch(fetchWalletAndHistory({ page: 1, limit: 10 }));
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(
+      fetchWalletAndHistory({
+        page: pagination.page,
+        limit: pagination.limit,
+        filters,
+      })
+    );
+  }, [dispatch, filters, pagination.page]);
 
   const handleFilterChange = (filterType, value) => {
     dispatch(setFilters({ [filterType]: value }));
+    dispatch(
+      fetchWalletAndHistory({
+        page: 1,
+        limit: pagination.limit,
+        filters: { ...filters, [filterType]: value },
+      })
+    );
   };
 
   const handlePageChange = (newPage) => {
-    dispatch(fetchWalletAndHistory({ page: newPage, limit: pagination.limit }));
+    if (newPage < 1 || newPage > pagination.pages) return;
+    dispatch(
+      fetchWalletAndHistory({
+        page: newPage,
+        limit: pagination.limit,
+        filters,
+      })
+    );
+  };
+
+  const handleClearFilters = () => {
+    dispatch(clearFilters());
+    dispatch(fetchWalletAndHistory({ page: 1, limit: pagination.limit }));
   };
 
   const getStatusBadge = (status) => {
@@ -60,7 +85,7 @@ const Wallet = () => {
       reward: "bg-green-900/50 text-green-300 border border-green-700",
       refund: "bg-purple-900/50 text-purple-300 border border-purple-700",
       withdrawal: "bg-yellow-900/50 text-yellow-300 border border-yellow-700",
-      other: "bg-gray-900/50 text-gray-300 border border-gray-700",
+      other: "bg-[#1a1a1a]/50 text-gray-300 border border-gray-700",
     };
     return (
       <span
@@ -138,60 +163,64 @@ const Wallet = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-<div className="mobileheader flex items-center justify-between mb-5 lg:hidden">
-    <h3><FaChevronLeft /></h3>
-    <h3 className="text-lg font-poppins">My Wallet</h3>
-     
-    <IoIosMore className="text-xl font-bold"/>
+    <div className="container mx-auto px-4 pb-8">
+      <div className="fixed top-0 left-0 right-0 bg-[#1a1a1a] z-50 flex items-center justify-between w-full md:hidden p-4 border-b border-gray-800">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center justify-center w-8 h-8 hover:bg-gray-800 rounded-full transition-colors"
+        >
+          <FaChevronLeft className="text-sm" />
+        </button>
+        <h2 className="text-sm font-semibold">My Wallet</h2>
+        <div className="w-8 h-8 flex items-center justify-center">
+          <IoIosMore className="text-xl cursor-pointer" />
+        </div>
+      </div>
 
-   </div>
-     {/* {error && (
-        <div className="mb-4 p-4 bg-red-900/50 text-red-200 rounded-lg border border-red-700">
-          {error}
-        </div>
-      )}
-    */}
-      <div className="mb-8 md:mb-8">
-        <div className=" rounded-2xl shadow-xl md:p-8 text-center border border-[#252525]">
-        <h3 className="text-white text-2xl font-semibold mb-2 hidden lg:block">MY WALLET</h3>
-         <div className="bg-[#1c1c1c] rounded-lg px-4  py-3 md:py-6 md:mb-6 flex items-start justify-between">
-          <div className="flex flex-col mb-2">
-            <p className="text-sm text-gray-400">Total balance</p>
-                      <p className="text-2xl font-semibold text-left">₹ {balance}</p>
+      <div className="w-full h-16 md:h-0"></div>
+
+      <div className="mb-8 md:mb-8 mt-4">
+        <div className="rounded-2xl shadow-xl md:p-8 text-center border border-[#252525]">
+          <h3 className="text-white text-lg font-semibold mb-2 hidden lg:block">
+            MY WALLET
+          </h3>
+          <div className="bg-[#1c1c1c] rounded-lg px-4 py-3 md:py-6 md:mb-6 mb-4 flex items-start justify-between">
+            <div className="flex flex-col mb-2">
+              <p className="text-xs text-gray-400">Total balance</p>
+              <p className="text-lg font-semibold text-left">₹ {balance}</p>
+            </div>
           </div>
-        </div>
-           <div className="flex flex-col lg:flex-row  justify-start gap-2 md:gap-4 mb-4">
+          <div className="flex flex-col lg:flex-row justify-start gap-2 md:gap-4 mb-4">
             <button
               onClick={() => setShowDepositModal(true)}
-              className="py-1 mx-3 md:mx-0 md:px-6 md:py-3 bg-[#f1c40f] text-black rounded-lg hover:bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+              disabled={loading}
+              className={`py-1 mx-3 md:mx-0 md:px-6 md:py-2.5 text-sm bg-[#f1c40f] text-black font-semibold rounded-lg hover:bg-[#f2c50f] transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-[#1a1a1a] ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
-              Add Credit
+              {loading ? "Loading..." : "Add Credit"}
             </button>
             <button
               onClick={() => setShowWithdrawModal(true)}
-              disabled={balance <= 0}
-              className={`py-1  mx-3 md:mx-0 md:px-6 md:py-3 border bg-[#f1c40f] border-gray-600 text-black rounded-lg hover:bg-[white] transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
-                balance <= 0 ? "opacity-50 cursor-not-allowed" : ""
+              disabled={loading || balance <= 0}
+              className={`py-1 mx-3 md:mx-0 md:px-6 md:py-2.5 text-sm bg-[#f1c40f] text-black font-semibold rounded-lg hover:bg-[#f2c50f] transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-[#1a1a1a] ${
+                loading || balance <= 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
-              Withdraw Now
+              {loading ? "Loading..." : "Withdraw Now"}
             </button>
           </div>
-        
         </div>
-      
       </div>
-      
 
-      <div className=" rounded-2xl shadow-xl p-6 border border-gray-700">
+      <div className="rounded-2xl shadow-xl p-6 border border-gray-700">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-white">
+          <h2 className="text-base font-semibold text-white">
             Transaction History
           </h2>
           <button
-            onClick={() => dispatch(clearFilters())}
-            className="text-sm text-gray-400 hover:text-white transition-colors"
+            onClick={handleClearFilters}
+            className="text-xs text-gray-400 hover:text-white transition-colors"
           >
             Clear Filters
           </button>
@@ -199,13 +228,13 @@ const Wallet = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-400 mb-2">
+            <label className="block text-xs font-medium text-gray-400 mb-2">
               Transaction Type
             </label>
             <select
               value={filters.type}
               onChange={(e) => handleFilterChange("type", e.target.value)}
-              className="w-full px-4 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+              className="w-full px-4 py-2 text-sm bg-[#1c1c1c] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
             >
               <option value="all">All Types</option>
               <option value="payin">Pay In</option>
@@ -229,7 +258,7 @@ const Wallet = () => {
           </div>
 
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-400 mb-2">
+            <label className="block text-xs font-medium text-gray-400 mb-2">
               Category
             </label>
             <select
@@ -237,7 +266,7 @@ const Wallet = () => {
               onChange={(e) =>
                 handleFilterChange("transactionType", e.target.value)
               }
-              className="w-full px-4 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+              className="w-full px-4 py-2 text-sm bg-[#1c1c1c] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
             >
               <option value="all">All Categories</option>
               <option value="recharge">Recharge</option>
@@ -264,13 +293,13 @@ const Wallet = () => {
           </div>
 
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-400 mb-2">
+            <label className="block text-xs font-medium text-gray-400 mb-2">
               Status
             </label>
             <select
               value={filters.status}
               onChange={(e) => handleFilterChange("status", e.target.value)}
-              className="w-full px-4 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
+              className="w-full px-4 py-2 text-sm bg-[#1c1c1c] border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none cursor-pointer"
             >
               <option value="all">All Status</option>
               <option value="completed">Completed</option>
@@ -297,7 +326,7 @@ const Wallet = () => {
 
         {loading ? (
           <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
           </div>
         ) : (
           <>
@@ -322,7 +351,7 @@ const Wallet = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-gray-900 divide-y divide-gray-700">
+                <tbody className="bg-[#1a1a1a] divide-y divide-gray-700">
                   {filteredHistory.map((transaction) => (
                     <tr
                       key={transaction._id}
@@ -361,21 +390,39 @@ const Wallet = () => {
               <div className="flex justify-center items-center gap-4 mt-6">
                 <button
                   onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page === 1}
-                  className={`px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
-                    pagination.page === 1 ? "opacity-50 cursor-not-allowed" : ""
+                  disabled={pagination.page === 1 || loading}
+                  className={`px-4 py-2 text-sm border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                    pagination.page === 1 || loading
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
                   }`}
                 >
                   Previous
                 </button>
-                <span className="text-sm text-gray-400">
-                  Page {pagination.page} of {pagination.pages}
-                </span>
+                <div className="flex items-center gap-2">
+                  {Array.from(
+                    { length: pagination.pages },
+                    (_, i) => i + 1
+                  ).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      disabled={loading}
+                      className={`w-8 h-8 text-sm rounded-lg ${
+                        pageNum === pagination.page
+                          ? "bg-blue-600 text-white"
+                          : "border border-gray-700 text-gray-300 hover:bg-gray-800"
+                      } ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
                 <button
                   onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page === pagination.pages}
-                  className={`px-4 py-2 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
-                    pagination.page === pagination.pages
+                  disabled={pagination.page === pagination.pages || loading}
+                  className={`px-4 py-2 text-sm border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                    pagination.page === pagination.pages || loading
                       ? "opacity-50 cursor-not-allowed"
                       : ""
                   }`}
@@ -384,9 +431,15 @@ const Wallet = () => {
                 </button>
               </div>
             )}
+
+            {!loading && filteredHistory.length === 0 && (
+              <div className="text-center py-8 text-gray-400">
+                No transactions found
+              </div>
+            )}
           </>
         )}
-      </div> 
+      </div>
 
       <DepositModal
         show={showDepositModal}

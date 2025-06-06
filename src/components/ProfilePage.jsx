@@ -16,6 +16,7 @@ import { CiPlay1 } from "react-icons/ci";
 import { FaChevronLeft } from "react-icons/fa6";
 import { CiBookmark } from "react-icons/ci";
 import { IoIosLogOut } from "react-icons/io";
+import { MdGroups, MdAccountBalanceWallet } from "react-icons/md";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("reels");
@@ -100,11 +101,16 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen container bg-[#1a1a1a] text-white font-poppins w-full overflow-hidden">
-      <div className="max-w-4xl mx-auto">
+      <div className=" mx-auto">
         <div className="p-4 lg:py-12 flex flex-col md:flex-row md:gap-8 md:items-start">
           <div className="flex flex-col items-center md:items-start">
             <div className="fixed top-0 left-0 right-0 bg-[#1a1a1a] z-50 flex items-center justify-between w-full md:hidden p-4 border-b border-gray-800">
-              <FaChevronLeft className="text-white" />
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center justify-center w-8 h-8 hover:bg-gray-800 rounded-full transition-colors"
+              >
+                <FaChevronLeft className="text-sm" />
+              </button>
               <h2 className="text-sm font-semibold">
                 {currentProfile.data.user.name}
               </h2>
@@ -178,19 +184,39 @@ const ProfilePage = () => {
                   @{currentProfile.data.user.username}
                 </h2>
               </div>
-              <div className="flex gap-2">
-                {isOwnProfile ? (
-                  <button className="bg-yellow-400 text-black px-3 py-1 rounded text-sm">
-                    Edit Profile
-                  </button>
-                ) : (
-                  <button className="bg-yellow-400 text-black px-3 py-1 rounded text-sm">
-                    Follow
-                  </button>
+              <div className="flex flex-col gap-2 w-full lg:w-auto">
+                {isOwnProfile && (
+                  <div className="flex gap-2 lg:hidden">
+                    <button
+                      onClick={() => navigate("/wallet")}
+                      className="bg-yellow-400 text-black px-3 py-1 rounded text-sm flex items-center gap-1 flex-1 justify-center"
+                    >
+                      <MdAccountBalanceWallet className="text-base" />
+                      Wallet
+                    </button>
+                    <button
+                      onClick={() => navigate("/community")}
+                      className="bg-yellow-400 text-black px-3 py-1 rounded text-sm flex items-center gap-1 flex-1 justify-center"
+                    >
+                      <MdGroups className="text-base" />
+                      Communities
+                    </button>
+                  </div>
                 )}
-                <button className="bg-yellow-400 text-black text-sm px-2 py-1 rounded whitespace-nowrap">
-                  Join at ₹99/m
-                </button>
+                <div className="flex gap-2 justify-center">
+                  {isOwnProfile ? (
+                    <button className="bg-yellow-400 text-black px-3 py-1 rounded text-sm">
+                      Edit
+                    </button>
+                  ) : (
+                    <button className="bg-yellow-400 text-black px-3 py-1 rounded text-sm">
+                      Follow
+                    </button>
+                  )}
+                  <button className="bg-yellow-400 text-black text-sm px-2 py-1 rounded whitespace-nowrap">
+                    Join at ₹99/m
+                  </button>
+                </div>
               </div>
             </div>
 

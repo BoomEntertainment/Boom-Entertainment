@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,6 +19,50 @@ const OtpForm = () => {
   const { loading, phoneNumber } = useSelector((state) => state.auth);
   const [otp, setOtp] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [resendTimer, setResendTimer] = useState(30);
+  const [canResend, setCanResend] = useState(false);
+
+  const startResendTimer = useCallback(() => {
+    setCanResend(false);
+    setResendTimer(30);
+    const timer = setInterval(() => {
+      setResendTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const cleanup = startResendTimer();
+    return cleanup;
+  }, [startResendTimer]);
+
+  const handleResendOtp = async () => {
+    if (!canResend || loading) return;
+
+    try {
+      dispatch(setLoading(true));
+      const response = await api.post(endpoints.auth.sendOtp, {
+        phone: phoneNumber,
+      });
+      dispatch(setError(null));
+      startResendTimer();
+      console.log("OTP resent:", response.data);
+    } catch (error) {
+      dispatch(
+        setError(error.response?.data?.message || "Failed to resend OTP")
+      );
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
   const handleOtpChange = (value) => {
     if (isVerifying) return;
@@ -85,7 +129,7 @@ const OtpForm = () => {
           <div>
             <label
               htmlFor="phone"
-              className="block text-sm font-medium text-gray-200 mb-2"
+              className="block text-sm font-medium text-white mb-2"
             >
               Phone Number
             </label>
@@ -93,7 +137,7 @@ const OtpForm = () => {
               <input
                 type="tel"
                 value={phoneNumber || ""}
-                className="w-full px-3 py-2.5 bg-[#1c1c1c] border border-gray-700 rounded-lg text-sm text-gray-400 cursor-not-allowed"
+                className="w-full px-3 py-2.5 bg-[#1c1c1c] border border-[#303030] rounded-lg text-sm text-gray-400 cursor-not-allowed"
                 disabled
               />
               <button
@@ -102,17 +146,51 @@ const OtpForm = () => {
                   dispatch(setOtpSent(false));
                   setOtp("");
                 }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-[#f1c40f] hover:text-blue-300 font-medium"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-[#f1c40f] hover:text-[#f2c50f] font-medium"
               >
                 Change
               </button>
             </div>
           </div>
 
+          <div className="w-full flex items-center justify-end">
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={!canResend || loading}
+              className={`text-sm font-medium transition-colors ${
+                canResend
+                  ? "text-[#f1c40f] hover:text-[#f2c50f]"
+                  : "text-gray-500 cursor-not-allowed"
+              }`}
+            >
+              {canResend ? (
+                "Resend OTP"
+              ) : (
+                <span className="flex items-center gap-1">
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Resend in {resendTimer}s
+                </span>
+              )}
+            </button>
+          </div>
+
           <div>
             <label
               htmlFor="otp"
-              className="block text-sm font-medium text-gray-200 mb-2"
+              className="block text-sm font-medium text-white mb-2"
             >
               Enter OTP
             </label>
@@ -122,7 +200,7 @@ const OtpForm = () => {
               numInputs={6}
               disabled={loading || isVerifying}
             />
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-3 text-xs text-gray-400">
               Enter the 6-digit code sent to your phone
             </p>
           </div>
@@ -131,12 +209,12 @@ const OtpForm = () => {
             type="button"
             onClick={() => handleVerifyOtp()}
             disabled={loading || isVerifying || otp.length !== 6}
-            className="w-full py-2.5 px-4 bg-[#f1c40f] text-white text-sm font-semibold rounded-lg hover:bg-white hover:text-black focus:outline-none focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full py-2.5 px-4 bg-[#f1c40f] text-black text-sm font-semibold rounded-lg hover:bg-[#f2c50f] focus:outline-none focus:ring-2 focus:ring-[#f1c40f] focus:ring-offset-2 focus:ring-offset-[#1a1a1a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading || isVerifying ? (
               <div className="flex items-center justify-center">
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-black"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

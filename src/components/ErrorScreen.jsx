@@ -1,6 +1,6 @@
 const ErrorScreen = ({ message, onRetry }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-[#1a1a1a]">
       <div className="text-center max-w-md px-4">
         <div className="text-red-500 mb-4">
           <svg

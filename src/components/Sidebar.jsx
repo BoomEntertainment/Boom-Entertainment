@@ -5,8 +5,9 @@ import { CgAddR } from "react-icons/cg";
 import { FiSearch } from "react-icons/fi";
 import { IoIosLogOut } from "react-icons/io";
 import { IoIosLogIn } from "react-icons/io";
+import { MdGroups, MdAccountBalanceWallet } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../store/authSlice";
 
 const Sidebar = () => {
@@ -14,12 +15,36 @@ const Sidebar = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  // Update active tab based on URL
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.startsWith("/profile/")) {
+      setActiveTab("profile");
+    } else if (path === "/community") {
+      setActiveTab("communities");
+    } else if (path === "/wallet") {
+      setActiveTab("wallet");
+    } else if (path === "/auth") {
+      setActiveTab(user ? "Logout" : "Login");
+    } else if (path === "/") {
+      // Default to Short Video for home page
+      setActiveTab("Short Video");
+    }
+  }, [location.pathname, user]);
 
   const handleNavigation = (id) => {
     setActiveTab(id);
     switch (id) {
       case "profile":
         navigate(`/profile/${user?.username}`);
+        break;
+      case "communities":
+        navigate("/community");
+        break;
+      case "wallet":
+        navigate("/wallet");
         break;
       case "Long Video":
         navigate("/");
@@ -49,6 +74,13 @@ const Sidebar = () => {
       id: "Long Video",
       icon: <FiVideo className="text-[1.25rem] lg:text-md font-semibold" />,
       label: "Long Video",
+    },
+    {
+      id: "wallet",
+      icon: (
+        <MdAccountBalanceWallet className="text-[1.25rem] lg:text-md font-semibold" />
+      ),
+      label: "Wallet",
     },
     {
       id: "add",
@@ -81,6 +113,8 @@ const Sidebar = () => {
     },
   ];
 
+  const mobileNavigationItems = [...mainNavigationItems];
+
   const authNavigationItem = !user
     ? {
         id: "Login",
@@ -102,17 +136,19 @@ const Sidebar = () => {
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1a1a1a] text-white z-50">
         <div className="flex justify-around items-center h-12">
-          {mainNavigationItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleNavigation(item.id)}
-              className={`flex flex-col font-semibold items-center justify-center cursor-pointer w-full h-full transition-colors ${
-                activeTab === item.id ? "text-[#f1c40f]" : "text-white"
-              }`}
-            >
-              {item.icon}
-            </button>
-          ))}
+          {mobileNavigationItems
+            .filter((item) => item.id !== "wallet")
+            .map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleNavigation(item.id)}
+                className={`flex flex-col font-semibold items-center justify-center cursor-pointer w-full h-full transition-colors ${
+                  activeTab === item.id ? "text-[#f1c40f]" : "text-white"
+                }`}
+              >
+                {item.icon}
+              </button>
+            ))}
         </div>
       </nav>
 

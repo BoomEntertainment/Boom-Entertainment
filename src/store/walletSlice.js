@@ -7,7 +7,7 @@ export const fetchWalletAndHistory = createAsyncThunk(
     const response = await api.get(
       `${endpoints.wallet.getWallet}?page=${page}&limit=${limit}`
     );
-    console.log(response.data.data);
+
     return response.data.data;
   }
 );

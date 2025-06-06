@@ -20,6 +20,8 @@ import Auth from "./pages/Auth";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingScreen from "./components/LoadingScreen";
 import ErrorScreen from "./components/ErrorScreen";
+import UserCommunities from "./pages/Community/UserCommunities";
+import CommunityDetail from "./pages/Community/CommunityDetail";
 
 const ProtectedLayout = ({ children }) => (
   <ProtectedRoute>
@@ -81,6 +83,8 @@ const AppContent = () => {
         <Route path="/" element={<Home />} />
         <Route path="/profile/:username" element={<ProfilePage />} />
         <Route path="/wallet" element={<Wallet />} />
+        <Route path="/community" element={<UserCommunities />} />
+        <Route path="/community/:id" element={<CommunityDetail />} />
       </Route>
 
       <Route

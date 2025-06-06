@@ -1,236 +1,240 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { withdrawMoney } from "../../store/walletSlice";
+import { toast } from "react-toastify";
 
 const WithdrawModal = ({ show, onHide }) => {
-  const dispatch = useDispatch();
-  const { loading, error, balance } = useSelector((state) => state.wallet);
-  const [amount, setAmount] = useState("");
-  const [bankDetails, setBankDetails] = useState({
+  const [formData, setFormData] = useState({
+    amount: "",
     accountNumber: "",
     ifscCode: "",
     accountHolderName: "",
   });
+  const [loading, setLoading] = useState(false);
+  const modalRef = useRef(null);
+  const dispatch = useDispatch();
+  const { balance } = useSelector((state) => state.wallet);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!amount || amount <= 0 || amount > balance) return;
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onHide();
+      }
+    };
 
-    const result = await dispatch(
-      withdrawMoney({
-        amount: Number(amount),
-        bankDetails,
-      })
-    );
+    if (show) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
 
-    if (!result.error) {
-      onHide();
-      setAmount("");
-      setBankDetails({
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [show, onHide]);
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!show) {
+      setFormData({
+        amount: "",
         accountNumber: "",
         ifscCode: "",
         accountHolderName: "",
       });
     }
-  };
+  }, [show]);
 
-  const handleBankDetailsChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setBankDetails((prev) => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  if (!show) return null;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { amount, accountNumber, ifscCode, accountHolderName } = formData;
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
+    if (!amount || amount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    if (parseFloat(amount) > balance) {
+      toast.error("Insufficient balance");
+      return;
+    }
+
+    if (!accountNumber || !ifscCode || !accountHolderName) {
+      toast.error("Please fill in all bank details");
+      return;
+    }
+
+    // Validate IFSC code format (11 characters, alphanumeric)
+    if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifscCode)) {
+      toast.error("Please enter a valid IFSC code");
+      return;
+    }
+
+    // Validate account number (numeric, 9-18 digits)
+    if (!/^\d{9,18}$/.test(accountNumber)) {
+      toast.error("Please enter a valid account number");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await dispatch(
+        withdrawMoney({
+          amount: parseFloat(amount),
+          bankDetails: {
+            accountNumber,
+            ifscCode,
+            accountHolderName,
+          },
+        })
+      ).unwrap();
+      toast.success("Withdrawal request submitted successfully");
       onHide();
+    } catch (error) {
+      toast.error(error.message || "Failed to process withdrawal");
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (!show) return null;
+
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto"
-      onClick={handleBackdropClick}
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onHide();
+      }}
     >
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        {/* Backdrop */}
-        <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-        </div>
+      <div
+        ref={modalRef}
+        className="bg-[#1a1a1a] rounded-lg w-full max-w-md border border-[#252525]"
+      >
+        <div className="p-6">
+          <h2 className="text-base font-bold text-white mb-4">
+            Withdraw Money
+          </h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label
+                htmlFor="amount"
+                className="block text-xs font-medium text-gray-400 mb-2"
+              >
+                Amount (₹)
+              </label>
+              <input
+                type="number"
+                id="amount"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                className="w-full px-4 py-2 text-sm bg-[#252525] border border-[#303030] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                placeholder="Enter amount"
+                min="1"
+                step="0.01"
+                required
+              />
+              <p className="mt-1 text-xs text-gray-400">
+                Available Balance: ₹{balance}
+              </p>
+            </div>
 
-        <span
-          className="hidden sm:inline-block sm:align-middle sm:h-screen"
-          aria-hidden="true"
-        >
-          &#8203;
-        </span>
+            <div>
+              <label
+                htmlFor="accountHolderName"
+                className="block text-xs font-medium text-gray-400 mb-2"
+              >
+                Account Holder Name
+              </label>
+              <input
+                type="text"
+                id="accountHolderName"
+                name="accountHolderName"
+                value={formData.accountHolderName}
+                onChange={handleChange}
+                className="w-full px-4 py-2 text-sm bg-[#252525] border border-[#303030] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                placeholder="Enter account holder name"
+                required
+              />
+            </div>
 
-        {/* Modal */}
-        <div className="inline-block align-bottom bg-gray-900 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-gray-700">
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-700">
-            <h3 className="text-xl font-semibold text-white">Withdraw Money</h3>
-          </div>
+            <div>
+              <label
+                htmlFor="accountNumber"
+                className="block text-xs font-medium text-gray-400 mb-2"
+              >
+                Account Number
+              </label>
+              <input
+                type="text"
+                id="accountNumber"
+                name="accountNumber"
+                value={formData.accountNumber}
+                onChange={handleChange}
+                className="w-full px-4 py-2 text-sm bg-[#252525] border border-[#303030] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                placeholder="Enter account number"
+                required
+              />
+            </div>
 
-          <div className="px-6 py-4">
-            {error && (
-              <div className="mb-4 p-4 bg-red-900/50 text-red-200 rounded-lg border border-red-700">
-                {error}
-              </div>
-            )}
+            <div>
+              <label
+                htmlFor="ifscCode"
+                className="block text-xs font-medium text-gray-400 mb-2"
+              >
+                IFSC Code
+              </label>
+              <input
+                type="text"
+                id="ifscCode"
+                name="ifscCode"
+                value={formData.ifscCode}
+                onChange={handleChange}
+                className="w-full px-4 py-2 text-sm bg-[#252525] border border-[#303030] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                placeholder="Enter IFSC code"
+                required
+              />
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label
-                  htmlFor="amount"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Amount (₹)
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-                    ₹
-                  </span>
-                  <input
-                    type="number"
-                    id="amount"
-                    min="1"
-                    max={balance}
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Enter amount"
-                    required
-                    className="block w-full pl-8 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  />
-                </div>
-                <p className="mt-2 text-sm text-gray-400">
-                  Available Balance: ₹{balance}
-                </p>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="accountHolderName"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Account Holder Name
-                </label>
-                <input
-                  type="text"
-                  id="accountHolderName"
-                  name="accountHolderName"
-                  value={bankDetails.accountHolderName}
-                  onChange={handleBankDetailsChange}
-                  placeholder="Enter account holder name"
-                  required
-                  className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="accountNumber"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Account Number
-                </label>
-                <input
-                  type="text"
-                  id="accountNumber"
-                  name="accountNumber"
-                  value={bankDetails.accountNumber}
-                  onChange={handleBankDetailsChange}
-                  placeholder="Enter account number"
-                  required
-                  className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="ifscCode"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  IFSC Code
-                </label>
-                <input
-                  type="text"
-                  id="ifscCode"
-                  name="ifscCode"
-                  value={bankDetails.ifscCode}
-                  onChange={handleBankDetailsChange}
-                  placeholder="Enter IFSC code"
-                  required
-                  className="block w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 space-y-3 space-y-reverse sm:space-y-0 pt-4">
-                <button
-                  type="button"
-                  onClick={onHide}
-                  className="w-full sm:w-auto px-6 py-3 rounded-lg text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={
-                    loading ||
-                    !amount ||
-                    amount <= 0 ||
-                    amount > balance ||
-                    !bankDetails.accountNumber ||
-                    !bankDetails.ifscCode ||
-                    !bankDetails.accountHolderName
-                  }
-                  className={`w-full sm:w-auto px-6 py-3 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-blue-500 ${
-                    loading ||
-                    !amount ||
-                    amount <= 0 ||
-                    amount > balance ||
-                    !bankDetails.accountNumber ||
-                    !bankDetails.ifscCode ||
-                    !bankDetails.accountHolderName
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center">
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Processing...
-                    </div>
-                  ) : (
-                    "Withdraw Money"
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                type="button"
+                onClick={onHide}
+                className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={
+                  loading ||
+                  !formData.amount ||
+                  parseFloat(formData.amount) > balance ||
+                  !formData.accountNumber ||
+                  !formData.ifscCode ||
+                  !formData.accountHolderName
+                }
+                className={`px-4 py-2 text-sm bg-[#f1c40f] text-black font-semibold rounded-lg hover:bg-[#f2c50f] transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 focus:ring-offset-[#1a1a1a] ${
+                  loading ||
+                  !formData.amount ||
+                  parseFloat(formData.amount) > balance ||
+                  !formData.accountNumber ||
+                  !formData.ifscCode ||
+                  !formData.accountHolderName
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+              >
+                {loading ? "Processing..." : "Withdraw Now"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
