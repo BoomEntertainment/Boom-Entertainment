@@ -233,56 +233,77 @@ const CreateCommunityModal = ({ isOpen, onClose, onSuccess }) => {
   );
 };
 
-const CommunityCard = ({ community, type }) => {
+const CommunityCard = ({ community, type, count }) => {
   return (
     <Link
       to={`/community/${community._id}`}
-      className="bg-[#1a1a1a] rounded-lg p-4 hover:bg-[#252525] transition-all"
+      className="bg-[#1a1a1a] border border-[#2c2c2c] rounded-xl hover:bg-[#2a2a2a] transition-all duration-200 p-1 lg:p-4 w-full shadow-sm hover:shadow-md"
     >
-      <div className="flex items-center gap-4">
-        {community.profile_photo ? (
-          <img
-            src={community.profile_photo}
-            alt={community.name}
-            className="w-16 h-16 rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-yellow-500 flex items-center justify-center text-2xl font-bold">
-            {community.name[0]}
-          </div>
-        )}
-        <div>
-          <h3 className="text-base">{community.name}</h3>
-          <p className="text-xs text-gray-400">{community.bio}</p>
-          {type !== "founded" && community.founder && (
-            <p className="text-xs text-gray-500 mt-1">
-              by {community.founder.username}
-            </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        {/* Left: Avatar + Info */}
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          {community.profile_photo ? (
+            <img
+              src={community.profile_photo}
+              alt={community.name}
+              className="w-6 h-6 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full object-cover border-2 border-[#333] shadow-inner"
+            />
+          ) : (
+            <div className="w-6 h-6 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-yellow-500 flex items-center justify-center text-sm sm:text-2xl font-bold text-black shadow-inner">
+              {community.name[0]}
+            </div>
           )}
-          <p className="text-xs text-gray-500 mt-1">
-            {type === "founded" ? "Created" : "Joined"}{" "}
-            {new Date(
-              type === "founded" ? community.createdAt : community.joinedAt
-            ).toLocaleDateString()}
-          </p>
+          <div className="min-w-0">
+            <h3 className="text-sm sm:text-base font-semibold text-white truncate max-w-[100px] sm:max-w-[140px]">
+              {community.name}
+            </h3>
+            {type !== "founded" && community.founder && (
+              <p className="text-xs text-gray-400 truncate max-w-[100px] sm:max-w-[140px]">
+                by <span className="font-medium">{community.founder.username}</span>
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Middle: Stats */}
+        <div className="flex gap-1 sm:gap-6 text-xs sm:text-sm text-white">
+          <div className="flex flex-col items-center min-w-[50px]">
+            <span className="font-semibold text-sm sm:text-base">{count ?? 0}</span>
+            <span className="text-[10px] sm:text-xs text-gray-400">Creators</span>
+          </div>
+          <div className="flex flex-col items-center min-w-[50px]">
+            <span className="font-semibold text-sm sm:text-base">{community.followersCount ?? 0}</span>
+            <span className="text-[10px] sm:text-xs text-gray-400">Followers</span>
+          </div>
+        </div>
+
+        {/* Right: View Button */}
+        <div className="flex justify-end">
+          <button className="bg-[#f1c40f] hover:bg-yellow-500 text-black text-xs sm:text-sm font-semibold px-3 py-1 rounded-md transition-colors duration-200 shadow hover:shadow-lg whitespace-nowrap">
+            View
+          </button>
         </div>
       </div>
     </Link>
   );
 };
 
-const CommunitySection = ({ title, communities, type }) => {
+
+
+const CommunitySection = ({ title, communities, type ,count}) => {
   if (!communities?.length) return null;
+  
 
   return (
     <div className="mt-8">
       <h2 className="text-lg mb-4">{title}</h2>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 lg:grid-cols-2 ">
         {communities.map((community) => (
           <CommunityCard
             key={community._id}
             community={community}
             type={type}
+            count={count}
           />
         ))}
       </div>
@@ -290,11 +311,22 @@ const CommunitySection = ({ title, communities, type }) => {
   );
 };
 
-const StatCard = ({ title, count }) => (
-  <div className="flex flex-col items-center">
-    <h3 className="text-base md:text-xl text-yellow-500">{count}</h3>
-    <p className="text-xs text-gray-400 mt-1 text-center">{title}</p>
-  </div>
+// const StatCard = ({ title, count }) => (
+//   <div className="flex flex-col items-center">
+//     <h3 className="text-base md:text-xl text-yellow-500">{count}</h3>
+//     <p className="text-xs text-gray-400 mt-1 text-center">{title}</p>
+//   </div>
+// );
+const StatCard = ({ title, count, isActive, onClick }) => (
+  <button
+    onClick={onClick}
+    className={`flex justify-center  items-center px-2 gap-2 py-1 rounded-md ${
+      isActive ? "bg-[#f1c40f] text-black " : ""
+    }`}
+  >
+    <h3 className="text-base md:text-xl ">{count}</h3>
+    <p className="text-xs  text-center">{title}</p>
+  </button>
 );
 
 export default function UserCommunities() {
@@ -305,6 +337,9 @@ export default function UserCommunities() {
   );
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [activeCommunityId, setActiveCommunityId] = useState(null);
+const [selectedTab, setSelectedTab] = useState("founded");
+
   const moreMenuRef = useRef(null);
 
   useEffect(() => {
@@ -340,7 +375,7 @@ export default function UserCommunities() {
   const { statistics, founded, creator, following } = data;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen container mx-auto px-4 py-8">
       <div className="fixed top-0 left-0 right-0 bg-[#1a1a1a] z-50 flex items-center justify-between w-full md:hidden p-4 border-b border-gray-800">
         <button
           onClick={() => navigate(-1)}
@@ -378,16 +413,64 @@ export default function UserCommunities() {
           My Communities
         </h1>
       </div>
+ {founded?.length > 0 && (
+        <div className="overflow-x-auto whitespace-nowrap mb-4 scrollbar-hide">
+          <div className="flex gap-2">
+            {founded.map((community) => (
+              <button
+                key={community._id}
+                onClick={() => setActiveCommunityId(community._id)}
+                className={`px-4 py-1.5  text-sm font-medium border ${
+                  activeCommunityId === community._id
+                    ? "bg-yellow-500 text-black border-yellow-500"
+                    : "bg-[#1a1a1a] text-gray-300 border-gray-600 hover:bg-[#2a2a2a]"
+                }`}
+              >
+                {community.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
-      <div className="flex justify-between items-center px-4 py-3 bg-[#1a1a1a] rounded-lg border border-gray-800">
+      <div className="searchbox mb-3 ">
+        <input
+          type="text"
+          placeholder="Search..."
+          className="w-full p-2 rounded-md bg-[#1c1c1c] border border-gray-700"
+        />
+      </div>
+      {/* <div className="flex justify-between items-center px-4 py-3 bg-[#1a1a1a] rounded-lg border border-gray-800">
         <StatCard title="Founded" count={statistics.foundedCount} />
         <div className="w-px h-8 bg-gray-800"></div>
         <StatCard title="Creator" count={statistics.creatorCount} />
         <div className="w-px h-8 bg-gray-800"></div>
         <StatCard title="Following" count={statistics.followingCount} />
-      </div>
+      </div> */}
+<div className="flex justify-between items-center px-4 py-3 bg-[#1a1a1a] rounded-lg border border-gray-800">
+  <StatCard
+    title="Founded"
+    count={statistics.foundedCount}
+    isActive={selectedTab === "founded"}
+    onClick={() => setSelectedTab("founded")}
+  />
+  <div className="w-px h-8 bg-gray-800"></div>
+  <StatCard
+    title="Creator"
+    count={statistics.creatorCount}
+    isActive={selectedTab === "creator"}
+    onClick={() => setSelectedTab("creator")}
+  />
+  <div className="w-px h-8 bg-gray-800"></div>
+  <StatCard
+    title="Following"
+    count={statistics.followingCount}
+    isActive={selectedTab === "following"}
+    onClick={() => setSelectedTab("following")}
+  />
+</div>
 
-      <div className="mt-8 flex justify-end">
+      <div className="mt-8 lg:flex justify-end hidden">
         <button
           onClick={() => setIsCreateModalOpen(true)}
           className="px-4 py-1.5 bg-yellow-500 text-sm text-black rounded-lg font-semibold hover:bg-yellow-600 flex items-center gap-2"
@@ -396,7 +479,7 @@ export default function UserCommunities() {
         </button>
       </div>
 
-      <CommunitySection
+      {/* <CommunitySection
         title="Communities You Founded"
         communities={founded}
         type="founded"
@@ -410,7 +493,38 @@ export default function UserCommunities() {
         title="Communities You Follow"
         communities={following}
         type="following"
-      />
+      /> */}
+      {selectedTab === "founded" && (
+  <CommunitySection
+    title="Communities You Founded"
+    communities={founded}
+    type="founded"
+     count={statistics.creatorCount}
+  />
+)}
+{selectedTab === "creator" && (
+  <CommunitySection
+    title="Communities You're a Creator In"
+    communities={creator}
+    type="creator"
+  />
+)}
+{selectedTab === "following" && (
+  <CommunitySection
+    title="Communities You Follow"
+    communities={following}
+    type="following"
+  />
+)}
+ <div className="fixed bottom-10 left-0 right-0 bg-[#1a1a1a] p-3 z-50 lg:hidden">
+  <button
+    onClick={() => setIsCreateModalOpen(true)}
+    className="w-full px-4 py-2 bg-yellow-500 text-sm text-black rounded-md font-semibold hover:bg-yellow-600 flex items-center justify-center gap-2"
+  >
+    <IoIosAdd className="text-lg" />
+    Create Community
+  </button>
+</div>
 
       <CreateCommunityModal
         isOpen={isCreateModalOpen}
@@ -420,3 +534,7 @@ export default function UserCommunities() {
     </div>
   );
 }
+
+
+
+
